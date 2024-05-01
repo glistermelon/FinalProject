@@ -2,7 +2,6 @@
 
 #include <Point.h>
 #include <Color.h>
-#include <shaders.h>
 
 #include <GL/glew.h>
 #include <stdexcept>
