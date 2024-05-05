@@ -1,4 +1,6 @@
-## Dependencies
+## Building
+
+### Dependencies
 
 * **GLFW**: https://www.glfw.org/ (build with CMake)
 * **GLEW**: https://glew.sourceforge.net/
@@ -7,34 +9,16 @@
 * **GLM**: https://github.com/g-truc/glm/releases/tag/1.0.1
   * *Build from source!* The "light" thing provided looks like its just headers and didn't work.
 
-## CMakeLists WIP
+### Setting imported library variables without the CMake GUI
 
-This should work at the moment but is rather messy and unprofessional:
+Particularly to import GLFW and GLM, you'll probably have to define
+`GLFW3_INCLUDE_DIR` amd `GLM_INCLUDE_DIR`, and maybe `GLFW3_LIBRARY`
+and `GLM_LIBRARY`. You can do this with `set()` in `CMakeLists.txt`,
+before `find_package()` is called.
 
-```cmake
-cmake_minimum_required(VERSION 3.22.0)
-
-project(physiks)
-
-add_executable(
-        physiks
-        src/main.cpp
-        src/Point.cpp
-        src/Color.cpp
-)
-
-target_include_directories(physiks PRIVATE include)
-
-set(GLEW_INCLUDE_DIR "/usr/local/include/glew/") # where the "GL" folder is (comes with glew)
-set(GLEW_LIBRARY "/usr/local/lib/libglew.a") # glew library (need to compile glew)
-
-find_package(OpenGL REQUIRED)
-find_package (GLEW REQUIRED)
-target_link_libraries(
-        physiks
-        OpenGL::GL
-        GLEW::glew
-        /usr/local/lib/libglfw3.a # glfw library
-        /usr/local/lib/libglm.a  # opengl mathematics library
-)
+Here's an example of setting `GLFW3_INCLUDE_DIR` and `GLFW3_LIBRARY`
+on Windows, where `C:/folder/include/glfw3` contains glfw3.h.
+```CMake
+set(GLFW3_INCLUDE_DIR C:/folder/include/glfw3)
+set(GLFW3_LIBRARY C:/folder/lib/glfw3.lib)
 ```
