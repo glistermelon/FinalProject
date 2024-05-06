@@ -10,13 +10,11 @@
 #include <limits>
 #include <stdexcept>
 
-#ifndef REPLIT
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "shaders.h"
-#endif
 
 // This is all Microsoft's fault (this is required for compilation with Visual Studio)
 #ifndef M_PI
@@ -496,12 +494,14 @@ std::vector<unsigned int> Block::triangulate() {
 
 }
 
+#include <C:/Users/th3gr/cs stuff/FinalProject/build/cmake_gen_shaders.hpp>
+
 #ifndef REPLIT
 void Block::init_static_render_cache() {
 
     // Set up shader program
-    unsigned int vertex_shader = compile_shader_file(GL_VERTEX_SHADER, "shaders/rectangle/vertex.glsl");
-    unsigned int frag_shader = compile_shader_file(GL_FRAGMENT_SHADER, "shaders/fragment.glsl");
+    unsigned int vertex_shader = compile_shader(GL_VERTEX_SHADER, SHADERS_VERTEX);
+    unsigned int frag_shader = compile_shader(GL_FRAGMENT_SHADER, SHADERS_FRAGMENT);
     gl_program = glCreateProgram();
     glAttachShader(gl_program, vertex_shader);
     glAttachShader(gl_program, frag_shader);

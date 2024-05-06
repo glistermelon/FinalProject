@@ -12,8 +12,10 @@ add_executable(
 )
 
 target_include_directories(physiks PRIVATE include)
+target_include_directories(physiks PRIVATE deps/include)
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+list(APPEND CMAKE_PREFIX_PATH ${PROJECT_SOURCE_DIR}/deps)
 
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
@@ -27,4 +29,37 @@ target_link_libraries(
         GLM::glm
 )
 
-file(COPY shaders DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+# inspired by, but not taken from https://gist.github.com/sivachandran/3a0de157dccef822a230
+file(GLOB_RECURSE shader_files "${PROJECT_SOURCE_DIR}/shaders/*.glsl")
+
+set(shader_header_filename "cmake_gen_shaders.hpp")
+set(shader_source_filename "cmake_gen_shaders.cpp")
+string(APPEND shader_header "#pragma once\n#include<string>\n")
+string(APPEND shader_source "#include \"${shader_header_filename}\"")
+
+foreach(file ${shader_files})
+
+    file(READ ${file} shader_str HEX)
+    string(REPLACE "${PROJECT_SOURCE_DIR}/" "" file ${file})
+    string(REGEX REPLACE "([0-9a-f][0-9a-f])" "0x\\1," shader_str ${shader_str})
+    set(shader_str std::string({${shader_str}}))
+
+    string(REPLACE ".glsl" "" var ${file})
+    string(REPLACE "/" "_" var ${var})
+    string(TOUPPER ${var} var)
+
+    message(${var})
+
+    string(APPEND shader_header "\nextern const std::string ${var}\\;")
+    string(APPEND shader_source "\nconst std::string ${var} = ${shader_str}\\;")
+
+endforeach()
+
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/${shader_header_filename}" ${shader_header})
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/${shader_source_filename}" ${shader_source})
+target_sources(physiks PRIVATE ${shader_source_filename})
+
+add_compile_definitions(GLEW_STATIC)
+
+# Tell Visual Studio to run the proper executable
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT physiks)

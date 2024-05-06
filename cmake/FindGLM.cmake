@@ -1,7 +1,7 @@
 include(FindPackageHandleStandardArgs)
 
 find_library(GLM_LIBRARY NAMES GLM)
-find_path(GLM_INCLUDE_DIR NAMES GLM/GLM.h)
+find_path(GLM_INCLUDE_DIR NAMES glm/glm.hpp)
 
 find_package_handle_standard_args(GLM REQUIRED_VARS GLM_LIBRARY GLM_INCLUDE_DIR)
 

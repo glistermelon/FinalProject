@@ -1,17 +1,15 @@
 #include "shaders.h"
 
 #include <GL/glew.h>
-#include <fstream>
-#include <sstream>
 
-unsigned int compile_shader_file(unsigned int type, const std::string& file_name, int* success) {
-    std::ifstream ifs(file_name);
-    if (!ifs.is_open()) throw std::runtime_error("failed to open shader file: " + file_name);
-    std::stringstream ss;
-    ss << ifs.rdbuf();
-    std::string s = ss.str();
-    const char* c = s.c_str();
+#include <iostream>
+
+unsigned int compile_shader(unsigned int type, std::string str, int* success) {
+    std::cout << "--------------------" << std::endl;
+    std::cout << str << std::endl;
+    std::cout << "--------------------" << std::endl;
     unsigned int shader = glCreateShader(type);
+    const char* c = str.c_str();
     glShaderSource(shader, 1, &c, nullptr);
     glCompileShader(shader);
     if (success) glGetShaderiv(shader, GL_COMPILE_STATUS, success);
