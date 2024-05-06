@@ -1,11 +1,14 @@
 #pragma once
 
-#include <Point.h>
-#include <Color.h>
+#include "Point.h"
+#include "Color.h"
 
-#include <GL/glew.h>
 #include <stdexcept>
 #include <vector>
+
+#ifndef REPLIT
+#include <GL/glew.h>
+#endif
 
 class Block {
 
@@ -38,7 +41,9 @@ public:
 
     // initialization
 
+#ifndef REPLIT
     static void init_static_render_cache();
+#endif
 
     // setters
 
@@ -54,6 +59,8 @@ public:
 
     // getters
 
+#ifndef REPLIT
+
     static decltype(gl_program) get_gl_program();
 
     // rendering
@@ -61,5 +68,7 @@ public:
     void update_render_cache();
 
     void render() const;
+
+#endif
 
 };

@@ -1,8 +1,13 @@
+#include "../include/replit.h"
+
+#ifndef REPLIT
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#endif
+
 #include <stdexcept>
 
-#include <Block.h>
+#include "../include/Block.h"
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -10,6 +15,8 @@
 
 int main() {
 
+#ifndef REPLIT
+    
     const int INITIAL_WINDOW_WIDTH = 1920;
     const int INITIAL_WINDOW_HEIGHT = 1080;
 
@@ -31,6 +38,8 @@ int main() {
 
     Block::init_static_render_cache(); // call once when app starts
 
+#endif
+
     // Example of rendering a yellow square
     // Anyone can delete this if you want to
     Block b;
@@ -39,14 +48,22 @@ int main() {
     b.add_vertex(Point(200, 0));
     b.add_vertex(Point(200, 200));
     b.add_vertex(Point(0, 200));
+
+#ifndef REPLIT
     b.update_render_cache(); // must be called after vertices are modified
+#endif
+    
     b.set_color(Color::YELLOW); // or Color(255, 255, 0)
 
+#ifndef REPLIT
+    
     while (!glfwWindowShouldClose(window)) {
         glUseProgram(Block::get_gl_program());
         b.render();
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+
+#endif
 
 }

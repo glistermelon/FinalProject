@@ -1,4 +1,6 @@
-#include <Point.h>
+#include "../include/replit.h"
+
+#include "../include/Point.h"
 
 Point::Point(double x, double y) : x(x), y(y) {}
 

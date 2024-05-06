@@ -1,16 +1,22 @@
-#include <Block.h>
+#include "../include/replit.h"
+
+#include "../include/Block.h"
 
 #include <list>
 #include <stack>
 #include <vector>
 #include <algorithm>
 #include <cmath>
-#include <shaders.h>
+#include <limits>
+#include <stdexcept>
+
+#ifndef REPLIT
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <stdexcept>
+#include "shaders.h"
+#endif
 
 // This is all Microsoft's fault (this is required for compilation with Visual Studio)
 #ifndef M_PI
@@ -490,6 +496,7 @@ std::vector<unsigned int> Block::triangulate() {
 
 }
 
+#ifndef REPLIT
 void Block::init_static_render_cache() {
 
     // Set up shader program
@@ -510,6 +517,7 @@ void Block::init_static_render_cache() {
     glDeleteShader(frag_shader);
 
 }
+#endif
 
 void Block::normalize_rotation() {
     rotation = normalize_angle(rotation);
@@ -540,6 +548,7 @@ void Block::add_vertex(size_t index, Point p) {
     vertices.insert(vertices.begin() + (decltype(vertices)::difference_type)index, p);
 }
 
+#ifndef REPLIT
 
 decltype(Block::gl_program) Block::get_gl_program() {
     return gl_program;
@@ -630,3 +639,5 @@ void Block::render() const {
 }
 
 unsigned int Block::gl_program;
+
+#endif
