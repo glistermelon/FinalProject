@@ -10,11 +10,13 @@
 #include <limits>
 #include <stdexcept>
 
+#ifndef REPLIT
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "shaders.h"
+#endif
 
 // This is all Microsoft's fault (this is required for compilation with Visual Studio)
 #ifndef M_PI

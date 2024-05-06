@@ -12,10 +12,12 @@ add_executable(
 )
 
 target_include_directories(physiks PRIVATE include)
-target_include_directories(physiks PRIVATE deps/include)
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
-list(APPEND CMAKE_PREFIX_PATH ${PROJECT_SOURCE_DIR}/deps)
+
+if (EXISTS ${PROJECT_SOURCE_DIR}/deps)
+        list(APPEND CMAKE_PREFIX_PATH ${PROJECT_SOURCE_DIR}/deps)
+endif()
 
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
