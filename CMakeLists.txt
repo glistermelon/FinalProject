@@ -60,6 +60,7 @@ endforeach()
 file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/${shader_header_filename}" ${shader_header})
 file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/${shader_source_filename}" ${shader_source})
 target_sources(physiks PRIVATE ${shader_source_filename})
+target_include_directories(physiks PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
 
 add_compile_definitions(GLEW_STATIC)
 

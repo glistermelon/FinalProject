@@ -16,6 +16,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "shaders.h"
+#include "cmake_gen_shaders.hpp"
 #endif
 
 // This is all Microsoft's fault (this is required for compilation with Visual Studio)
@@ -495,8 +496,6 @@ std::vector<unsigned int> Block::triangulate() {
     return indices;
 
 }
-
-#include <C:/Users/th3gr/cs stuff/FinalProject/build/cmake_gen_shaders.hpp>
 
 #ifndef REPLIT
 void Block::init_static_render_cache() {
