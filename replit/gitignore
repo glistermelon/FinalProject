@@ -1,6 +1,0 @@
-build/
-.idea/
-.vscode/
-deps/
-CMakeLists.txt
-.gitignore
