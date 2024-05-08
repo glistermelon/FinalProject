@@ -3,7 +3,7 @@
 ### `Block::get_triangulation()`
 Don't implement this (I've already started on it). However, **you have to understand what this function does** because it makes implementing all the other functions much easier. This function returns a list of triangles which make up the triangle decomposition of the block, as in the image below. Triangulation **has already been implemented** as part of the drawing process, but minor modifications need to be made to get the results from that process out of this function.
 
-![alt text](Untitled.png)
+![triangulation image](README/triangulation.png)
 
 ### `Block::center_of_mass()`
 Returns the location of the block's center of mass **relative to the first Point in the vertices field, assuming that the object's rotation is zero**. The easiest way to implement this is *probably* by using `Block::get_triangulation()` to get the list of triangles that make up the block, then calling `Triangle::centroid()` on each triangle (the centroid of a triangle is its center of mass) and using that information to calculate the center of mass of the block itself.
@@ -35,5 +35,5 @@ This is just a vector consisting of two doubles, which are usually going to be x
 
 For specifics:
 * `direction` returns the angle between the vector and the +x axis, as if the vector was placed on the unit circle. Basically, it returns the theta seen in the image below. Make sure you use `normalize_angle`, defined in `Block.h`, on your output to ensure that it falls between 0 and 2*pi radians.
-    ![alt text](image.png)
+    ![vector image](README/unit%20circle%20vector.png)
 * `magnitude` returns the length of the vector.
