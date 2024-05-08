@@ -476,10 +476,9 @@ std::vector<unsigned int> Block::triangulate() {
         // all faces should be triangular
         auto* half_edge = face->half_edge;
         for (unsigned char i = 0; i < 3; ++i, half_edge = half_edge->next) {
-            indices.push_back(
-                    std::find(vertices.begin(), vertices.end(), half_edge->origin->point)
-                        - vertices.begin()
-            );
+            auto it = std::find(vertices.begin(), vertices.end(), half_edge->origin->point);
+            indices.push_back(it - vertices.begin());
+            triangulation.push_back(&*it);
         }
 
     }
@@ -630,11 +629,16 @@ void Block::render() const {
 }
 
 std::vector<Triangle> Block::get_triangulation() {
-    // Leave this as a stub for now
-    // Triangulation is already done for the rendering;
-    // an update is in progress which will include
-    // the definition of this function
-    return std::vector<Triangle>();
+    size_t n = triangulation.size();
+    std::vector<Triangle> triangles;
+    for (size_t i = 0; i < n; i += 3) {
+        triangles.push_back(Triangle(
+                *triangulation[i],
+                *triangulation[i + 1],
+                *triangulation[i + 2]
+        ));
+    }
+    return triangles;
 }
 
 Rect Block::bounding_box() { // TODO
