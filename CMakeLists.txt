@@ -9,6 +9,9 @@ add_executable(
         src/Color.cpp
         src/Block.cpp
         src/shaders.cpp
+        src/Quadtree.cpp
+        src/Vect2.cpp
+        src/Triangle.cpp
 )
 
 target_include_directories(physiks PRIVATE include)

@@ -2,6 +2,9 @@
 
 #include "Point.h"
 #include "Color.h"
+#include "Rect.h"
+#include "Triangle.h"
+#include "Vect2.h"
 
 #include <stdexcept>
 #include <vector>
@@ -23,11 +26,17 @@ class Block {
 
     std::vector<Point> vertices; // block is a polygon, with no holes
 
+    Vect2<double> velocity;
+
+    double mass;
+
     Color color = Color::WHITE;
 
     // OpenGL objects
     static unsigned int gl_program;
     unsigned int gl_vao, gl_ebo, gl_triangles;
+
+    std::vector<Point*> triangulation; // point to Points in the vertices field
 
     // place rotation between 0 and 2*PI
     void normalize_rotation();
@@ -70,5 +79,13 @@ public:
     void render() const;
 
 #endif
+
+    std::vector<Triangle> get_triangulation(); // should take triangles from the "triangulation" field
+
+    Rect bounding_box(); // return a rectangular bounding box containing all the block's vertices
+
+    Point center_of_mass();
+
+    double moment_of_inertia(); // scary
 
 };

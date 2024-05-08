@@ -639,6 +639,26 @@ void Block::render() const {
 
 }
 
+std::vector<Triangle> Block::get_triangulation() {
+    // Leave this as a stub for now
+    // Triangulation is already done for the rendering;
+    // an update is in progress which will include
+    // the definition of this function
+    return std::vector<Triangle>();
+}
+
+Rect Block::bounding_box() { // TODO
+    return Rect();
+}
+
+Point Block::center_of_mass() { // TODO
+    return Point();
+}
+
+double Block::moment_of_inertia() { // TODO
+    return 0;
+}
+
 unsigned int Block::gl_program;
 
 #endif
