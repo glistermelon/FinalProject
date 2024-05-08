@@ -36,7 +36,7 @@ class Block {
 
     std::vector<Point> vertices; // block is a polygon, with no holes
 
-    Vect2<double> velocity;
+    Vect2 velocity;
 
     double mass;
 

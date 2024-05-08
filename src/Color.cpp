@@ -1,5 +1,3 @@
-#include "../include/replit.h"
-
 #include "../include/Color.h"
 
 Color Color::BLACK { 0, 0, 0 };
