@@ -6,7 +6,6 @@
 #include <stack>
 #include <vector>
 #include <algorithm>
-#include <cmath>
 #include <limits>
 #include <stdexcept>
 
@@ -18,15 +17,6 @@
 #include "shaders.h"
 #include "cmake_gen_shaders.hpp"
 #endif
-
-// This is all Microsoft's fault (this is required for compilation with Visual Studio)
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
-
-double normalize_angle(double angle) {
-    return angle - (2.0 * M_PI) * std::floor(angle / (2.0 * M_PI));
-}
 
 // Doubly connected edge list specialized for hole-less polygon triangulation
 // The following rules are NOT ENFORCED BY THE IMPLEMENTATION. Break them and you'll get unexpected behavior.

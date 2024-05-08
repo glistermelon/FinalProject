@@ -8,10 +8,20 @@
 
 #include <stdexcept>
 #include <vector>
+#include <cmath>
 
 #ifndef REPLIT
 #include <GL/glew.h>
 #endif
+
+// This is all Microsoft's fault (this is required for compilation with Visual Studio)
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
+inline double normalize_angle(double angle) {
+    return angle - (2.0 * M_PI) * std::floor(angle / (2.0 * M_PI));
+}
 
 class Block {
 
