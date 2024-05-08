@@ -25,7 +25,7 @@ int main() {
     glfwWindowHint(GLFW_SAMPLES, 5); // Anti-aliasing!
 
     auto* window = glfwCreateWindow(
-            INITIAL_WINDOW_WIDTH, INITIAL_WINDOW_HEIGHT, "[window title]",
+            INITIAL_WINDOW_WIDTH, INITIAL_WINDOW_HEIGHT, "Physiks Simulator",
             nullptr, nullptr
     );
     if (!window) throw std::runtime_error("window creation failed");
