@@ -643,8 +643,31 @@ Rect Block::bounding_box() { // TODO
     return Rect();
 }
 
-Point Block::center_of_mass() { // TODO
-    return Point();
+Point Block::center_of_mass() { 
+    double centerx = 0;
+    double centery = 0;
+    double area = 0;
+    if (vertices.size() < 3){
+        return Point(); // May want to add a signal if the polygon doesn't have enough vertices
+    }
+
+    for(size_t i = 0; i < vertices.size(); i++){
+        const Point& current = vertices[i];
+        const Point& next = vertices[(i+1) % vertices.size()];
+
+        double a = current.x * next.y - next.x * current.y;
+        centerx += (current.x + next.x) * a;
+        centery += (current.y + next.y) * a;
+        area += a;
+    }
+    
+    area = area/2;
+    if(area != 0){
+        centerx /= (6*area);
+        centery /= (6*area);
+    }
+
+    return Point(centerx, centery);
 }
 
 double Block::moment_of_inertia() { // TODO
