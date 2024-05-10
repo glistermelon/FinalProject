@@ -1,6 +1,6 @@
 #include "../include/Vect2.h"
 #include <cmath>
-
+#include <assert.h>
 
 Vect2::Vect2() {
     value1 = 0;
@@ -13,7 +13,28 @@ Vect2::Vect2(double v1, double v2) {
 }
 
 double Vect2::direction() {
-    return atan(value2 / value1);
+    if (x == 0) {
+        if (y > 0) {
+            return (M_PI / 2);
+        }
+        else if (y < 0) {
+            return (3 * (M_PI / 2));
+        }
+        else {
+            //You can't call direction() on the zero vector, silly!
+            assert(false);
+        }
+    }
+    else {
+        double angleRadians = atan(value2 / value1);
+        if (x < 0) {
+            angleRadians += M_PI;
+        }
+        else if (y < 0) {
+            angleRadians += (M_PI * 2);
+        }
+        return angleRadians;
+    }
 }
 
 double Vect2::magnitude() {
