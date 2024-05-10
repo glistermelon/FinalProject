@@ -1,4 +1,5 @@
 #include "../include/Vect2.h"
+#define _USE_MATH_DEFINES
 #include <cmath>
 #include <assert.h>
 
@@ -15,7 +16,7 @@ Vect2::Vect2(double v1, double v2) {
 double Vect2::direction() {
     if (x == 0) {
         if (y > 0) {
-            return (M_PI / 2);
+            return (M_PI / 2); 
         }
         else if (y < 0) {
             return (3 * (M_PI / 2));
