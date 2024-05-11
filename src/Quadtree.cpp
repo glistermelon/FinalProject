@@ -1,9 +1,5 @@
 #include "Quadtree.h"
 
-bool QuadtreeNode::are_colliding(Block *b1, Block *b2) { // TODO
-    return false;
-}
-
 void QuadtreeNode::handle_collisions() {
     if (top_left) top_left->handle_collisions();
     if (top_right) top_right->handle_collisions();
@@ -13,30 +9,37 @@ void QuadtreeNode::handle_collisions() {
     for (Block* b1 : blocks) {
         for (Block* b2 : blocks) {
             if (b1 == b2) continue;
-            if (are_colliding(b1, b2))
-                collisions.push_back(Collision(b1, b2));
+            if (are_colliding(b1, b2)); // TODO
         }
     }
 }
 
-std::pair<Point, Point> Collision::calc_points() { // TODO
-    return {};
+bool QuadtreeNode::are_colliding(Block* b1, Block* b2) { // TODO
+    return false;
 }
 
-Vect2 Collision::calc_normal() { // TODO
-    return {};
+void QuadtreeNode::insert_block(Block*) { // TODO
+
 }
 
-double Collision::calc_impulse(Point p, Block *b) { // TODO
+void QuadtreeNode::remove_block(Block*) { // TODO
+
+}
+
+Collision::Collision(Point p1, Point p2, Vect2 normal) : point1(p1), point2(p2), normal(normal) {}
+
+double Collision::calc_impulse(Point*) { // TODO
     return 0;
 }
-
-Collision::Collision(Block *b1, Block *b2) : block1(b1), block2(b2) {}
 
 void Collision::solve() { // TODO
 
 }
 
-void Collision::apply() { // TODO
+std::vector<Collision> CollisionGroup::find_collisions() { // TODO
+    return {};
+}
 
+Vect2 CollisionGroup::calc_normal() { // TODO
+    return {};
 }

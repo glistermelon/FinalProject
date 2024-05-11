@@ -8,35 +8,49 @@
 class Collision {
 
     Point point1, point2;
-    Block* block1, *block2;
+    Vect2 normal;
 
     double total_impulse = 0; // cumulative impulse
 
-    static std::pair<Point, Point> calc_points();
-
-    static Vect2 calc_normal();
-
-    static double calc_impulse(Point p, Block* b); // impulse for point p which is on Block b
+    double calc_impulse(Point*);
 
 public:
 
-    Collision(Block* b1, Block* b2);
+    Collision(Point p1, Point p2, Vect2 normal);
 
     void solve();
-    void apply();
+
+};
+
+class CollisionGroup {
+
+    Block* block1, *block2;
+    Vect2 normal;
+
+    Vect2 calc_normal();
+    std::vector<Collision> find_collisions();
 
 };
 
 class QuadtreeNode {
+
+    const static unsigned int split_threshold = 5;
 
     QuadtreeNode *top_left = nullptr,
         *top_right = nullptr,
         *bottom_left = nullptr,
         *bottom_right = nullptr;
 
-    std::list<Block*> blocks;
+    Rect bounds;
+
+    std::vector<Block*> blocks;
 
     bool are_colliding(Block* b1, Block* b2);
+
+public:
+
+    void insert_block(Block*);
+    void remove_block(Block*);
 
     void handle_collisions();
 
