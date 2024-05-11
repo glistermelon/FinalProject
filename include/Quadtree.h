@@ -7,16 +7,17 @@
 
 class Collision {
 
+    Block* block1, *block2;
     Point point1, point2;
     Vect2 normal;
 
     double total_impulse = 0; // cumulative impulse
 
-    double calc_impulse(Point*);
+    double calc_impulse(Point*); // argument should be either point1 or point2
 
 public:
 
-    Collision(Point p1, Point p2, Vect2 normal);
+    Collision(Block* b1, Block* b2, Point p1, Point p2, Vect2 normal);
 
     void solve();
 

@@ -26,7 +26,8 @@ void QuadtreeNode::remove_block(Block*) { // TODO
 
 }
 
-Collision::Collision(Point p1, Point p2, Vect2 normal) : point1(p1), point2(p2), normal(normal) {}
+Collision::Collision(Block* b1, Block* b2, Point p1, Point p2, Vect2 normal)
+    : block1(b1), block2(b2), point1(p1), point2(p2), normal(normal) {}
 
 double Collision::calc_impulse(Point*) { // TODO
     return 0;
