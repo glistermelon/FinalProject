@@ -41,12 +41,7 @@ int main() {
 
     // Example of rendering a yellow square
     // Anyone can delete this if you want to
-    Block b;
-    b.set_position(100, 200);
-    b.add_vertex(Point(0, 0));
-    b.add_vertex(Point(200, 0));
-    b.add_vertex(Point(200, 200));
-    b.add_vertex(Point(0, 200));
+    Block b {100, 200, 100, 200, 1};
 
 #ifndef REPLIT
     b.update_render_cache(); // must be called after vertices are modified

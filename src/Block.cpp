@@ -507,6 +507,16 @@ void Block::init_static_render_cache() {
 }
 #endif
 
+Block::Block(double cX, double cY, double width, double height, double mass) {
+    width /= 2; height /= 2;
+    set_position(cX, cY);
+    add_vertex(Point(cX - width, cY - height));
+    add_vertex(Point(cX + width, cY - height));
+    add_vertex(Point(cX + width, cY + height));
+    add_vertex(Point(cX - width, cY + height));
+    this->mass = mass;
+}
+
 void Block::normalize_rotation() {
     rotation = normalize_angle(rotation);
 }

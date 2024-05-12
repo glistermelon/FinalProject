@@ -59,6 +59,7 @@ class Block {
 public:
 
     // initialization
+    Block(double cX = 0, double cY = 0, double width = 100, double height = 100, double mass = 1);
 
 #ifndef REPLIT
     static void init_static_render_cache();
