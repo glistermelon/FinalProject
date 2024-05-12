@@ -1,6 +1,7 @@
 #ifndef REPLIT
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <iostream>
 #endif
 
 #include <stdexcept>
@@ -41,7 +42,7 @@ int main() {
     // Example of rendering a yellow square
     // Anyone can delete this if you want to
     Block b;
-    b.set_position(100, 100);
+    b.set_position(100, 200);
     b.add_vertex(Point(0, 0));
     b.add_vertex(Point(200, 0));
     b.add_vertex(Point(200, 200));

@@ -639,8 +639,20 @@ std::vector<Triangle> Block::get_triangulation() {
     return triangles;
 }
 
+// Gets the bounding box of the block, Top left point and width and height
 Rect Block::bounding_box() { // TODO
-    return Rect();
+    Point * tLeft = &vertices[0];
+    double width = 0, height = 0;
+    for (size_t i = 1; i < vertices.size(); i++) {
+        if (width == 0 && tLeft->y == vertices[i].y) 
+            width = std::abs(tLeft->x - vertices[i].x);
+        if (height == 0 && tLeft->x == vertices[i].x)
+            height = std::abs(tLeft->y - vertices[i].y);
+        if (tLeft->x >= vertices[i].x && tLeft->y <= vertices[i].y) {
+            tLeft = &vertices[i];
+        }
+    }
+    return Rect{*tLeft, width, height};
 }
 
 Point Block::center_of_mass() { 
