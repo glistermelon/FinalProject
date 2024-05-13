@@ -112,4 +112,7 @@ public:
     void apply_velocity();
 
     Vect2 distance(const Point&);
+
+    Point to_world_coords(Point);
+
 };

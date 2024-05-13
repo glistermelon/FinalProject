@@ -743,10 +743,10 @@ std::vector<Point> Block::find_intersections(Block &other) {
     for (size_t i1 = 0; i1 < num_vertices1; ++i1) {
         for (size_t i2 = 0; i2 < num_vertices2; ++i2) {
 
-            auto p1 = vertices1[i1];
-            auto p1_twin = vertices[i1 + 1];
-            auto p2 = vertices2[i2];
-            auto p2_twin = vertices[i2 + 1];
+            auto p1 = to_world_coords(vertices1[i1]);
+            auto p1_twin = to_world_coords(vertices[i1 + 1]);
+            auto p2 = to_world_coords(vertices2[i2]);
+            auto p2_twin = to_world_coords(vertices[i2 + 1]);
             auto s1 = (p1.y - p1_twin.y) / (p1.x - p1_twin.x);
             auto s2 = (p2.y - p2_twin.y) - (p2.x - p2_twin.x);
             auto x = p2.y - p1.y - s2 * p2.x + s1 * p1.x / (s1 - s2);
