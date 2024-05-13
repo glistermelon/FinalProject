@@ -699,18 +699,21 @@ double Block::moment_of_inertia() { // TODO
 }
 
 void Block::apply_accel(Vect2 accel) {
+    if (is_static) return;
     velocity.x += accel.x / fps;
     velocity.y += accel.y / fps;
 }
 
+#include <iostream>
 void Block::apply_velocity() {
+    if (is_static) return;
     double deltaX = velocity.x / fps;
     double deltaY = velocity.y / fps;
     position.x += deltaX;
     position.y += deltaY;
-    for (Point p : vertices) {
-        p.x += deltaX;
-        p.y += deltaY;
+    for (int i = 0; i < vertices.size(); i++) {
+        vertices[i].x += deltaX;
+        vertices[i].y += deltaY;
     }
 }
 

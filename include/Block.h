@@ -27,6 +27,8 @@ inline double normalize_angle(double angle) {
 
 class Block {
 public:
+    bool is_static = false;
+
     Point position;
 
     // Angle in radians between horizontal line in 2D space

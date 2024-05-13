@@ -52,6 +52,11 @@ int main() {
     Block b2 {500, 400, 300, 200, 1};
     blocks.push_back(&b2);
 
+    // Ground
+    Block b3 {500, 50, 2000, 10, 0};
+    b3.is_static = true;
+    blocks.push_back(&b3);
+
 #ifndef REPLIT
     b.update_render_cache(); // must be called after vertices are modified
     for (auto* block : blocks) block->update_render_cache();
