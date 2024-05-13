@@ -5,6 +5,7 @@
 #include "Rect.h"
 #include "Triangle.h"
 #include "Vect2.h"
+#include "Constants.h"
 
 #include <stdexcept>
 #include <vector>
@@ -100,11 +101,9 @@ public:
 
     double moment_of_inertia(); // scary
 
-    void apply_accel(Vect2 accel, unsigned int fps);
     void apply_accel(Vect2 accel); // does not account for fps when applying acceleration
-    void apply_angular_accel(double accel, unsigned int fps);
     void apply_angular_accel(double accel);
-    void apply_velocity(unsigned int fps);
+    void apply_velocity();
 
     Vect2 distance(Point);
 };
