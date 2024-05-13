@@ -25,4 +25,6 @@ struct Vect2 {
 
     static double dot_product(Vect2, Vect2);
 
+    void flip();
+
 };

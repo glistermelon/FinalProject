@@ -61,3 +61,8 @@ Vect2 Vect2::operator-(Vect2 v) {
 double Vect2::dot_product(Vect2 v1, Vect2 v2) {
     return ((v1.x * v2.x) + (v1.y * v2.y));
 }
+
+void Vect2::flip() {
+    value1 = -value1;
+    value2 = -value2;
+}
