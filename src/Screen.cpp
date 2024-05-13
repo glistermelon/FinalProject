@@ -2,9 +2,9 @@
 
 #include <iostream>
 
-Screen::Screen() {
+Screen::Screen(unsigned int fps) : fps(fps) {
     gravity_accel.x = 0;
-    gravity_accel.y = -gravity;
+    gravity_accel.y = -9.81;
 
     // Add ground
 
@@ -18,7 +18,7 @@ void Screen::update() {
 
     // Move blocks based on velocity
     for (Block* block : blocks) {
-        block->apply_velocity();
+        block->apply_velocity(fps);
     }
 
     // Handle Collisions
@@ -46,7 +46,7 @@ void Screen::update() {
 
     // Add gravity
     for (Block* block : blocks) {
-        block->apply_accel(gravity_accel);
+        block->apply_accel(gravity_accel, fps);
     }
 
     // Update render cache

@@ -66,8 +66,10 @@ int main() {
     b.set_color(Color::WHITE); // or Color(255, 255, 0)
 
 #ifndef REPLIT
+
+    const unsigned int fps = 30;
     
-    Screen screen;
+    Screen screen(fps);
     screen.blocks = blocks;
 
     double interval_between_frames = 1.0 / fps;

@@ -698,14 +698,14 @@ double Block::moment_of_inertia() { // TODO
     return 0;
 }
 
-void Block::apply_accel(Vect2 accel) {
+void Block::apply_accel(Vect2 accel, unsigned int fps) {
     if (is_static) return;
     velocity.x += accel.x / fps;
     velocity.y += accel.y / fps;
 }
 
 #include <iostream>
-void Block::apply_velocity() {
+void Block::apply_velocity(unsigned int fps) {
     if (is_static) return;
     double deltaX = velocity.x / fps;
     double deltaY = velocity.y / fps;

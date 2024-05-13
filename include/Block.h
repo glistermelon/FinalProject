@@ -1,7 +1,5 @@
 #pragma once
 
-// #include "Screen.h"
-#include "Constants.h"
 #include "Point.h"
 #include "Color.h"
 #include "Rect.h"
@@ -101,6 +99,6 @@ public:
 
     double moment_of_inertia(); // scary
 
-    void apply_accel(Vect2 accel);
-    void apply_velocity();
+    void apply_accel(Vect2 accel, unsigned int fps);
+    void apply_velocity(unsigned int fps);
 };
