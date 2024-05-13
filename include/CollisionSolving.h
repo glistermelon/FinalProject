@@ -33,7 +33,6 @@ class CollisionGroup {
     Vect2 normal;
 
     Vect2 calc_normal();
-    std::vector<Collision> find_collisions();
 
 public:
 

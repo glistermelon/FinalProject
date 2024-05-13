@@ -99,6 +99,10 @@ public:
 
     bool is_intersecting(Block& other);
 
+    // finds every intersection point between two blocks
+    // intended to be called if it is already known that this block and the other block are colliding
+    std::vector<Point> find_intersections(Block& other);
+
     Point center_of_mass();
 
     double moment_of_inertia(); // scary

@@ -49,10 +49,6 @@ void Collision::solve() {
 
 CollisionGroup::CollisionGroup(Block *b1, Block *b2) : block1(b1), block2(b2) {}
 
-std::vector<Collision> CollisionGroup::find_collisions() { // TODO
-    return {};
-}
-
 Vect2 CollisionGroup::calc_normal() { // TODO
     return {};
 }
