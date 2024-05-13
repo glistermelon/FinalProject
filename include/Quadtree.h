@@ -31,11 +31,15 @@ class CollisionGroup {
     Vect2 calc_normal();
     std::vector<Collision> find_collisions();
 
+public:
+
+    CollisionGroup(Block* b1, Block* b2);
+
+    void solve();
+
 };
 
 class QuadtreeNode {
-
-    const static unsigned int split_threshold = 5;
 
     QuadtreeNode *top_left = nullptr,
         *top_right = nullptr,
@@ -53,6 +57,6 @@ public:
     void insert_block(Block*);
     void remove_block(Block*);
 
-    void handle_collisions();
+    void handle_collisions(std::vector<Block*> higher_ups, std::vector<std::pair<Block*, Block*>> already_found);
 
 };
