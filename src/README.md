@@ -3,21 +3,6 @@
 ### `Block::moment_of_inertia()`
 I haven't looked into this enough to know *for certain* if it is actually possible to implement given our constraints, but as the name implies, this should return the moment of inertia of the block. This will involve using Calculus to, from what I can tell, integrate over point masses within the block. I would use `Block::get_triangulation()` to get those point masses, since it is easy to discern whether or not a point is within a triangle.
 
-### `QuadtreeNode::are_colliding(Block* b1, Block* b2)`
-Returns `true` if the two blocks are overlapping each-other (colliding), or `false` otherwise. This should involve two phases:
-* Check for possible collision using `Block::bounding_box()`. If the bounding boxes of the shapes do not overlap, then they are not colliding.
-* Lastly, call `Block::get_triangulation()` on both blocks, then iterate over all the triangles composing each block. If any of the triangles composing one block intersects a triangle composing the other block, then the blocks must be colliding.
-
-### `QuadtreeNode::insert_block(Block*)`
-Inserts a block into the quadtree, like so:
-* If the block could fit into just one quadrant of this node:
-    * If that quadrant already exists: insert the block into it
-    * Otherwise, create the quadrant and insert the block into it
-* Else if the number of blocks contained in this node is greater than the split threshold (`QuadtreeNode::split_threshold`), 
-
-### `QuadtreeNode::remove_block(Block*)`
-Remove the block from the quadtree. If no other blocks were stored in the node that stored the block, then delete that node.
-
 ### `CollisionGroup::find_collisions()`
 Given two blocks, return all the collisions between the two, as in the image below.
 
