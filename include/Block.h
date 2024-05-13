@@ -1,5 +1,7 @@
 #pragma once
 
+// #include "Screen.h"
+#include "Constants.h"
 #include "Point.h"
 #include "Color.h"
 #include "Rect.h"
@@ -24,7 +26,7 @@ inline double normalize_angle(double angle) {
 }
 
 class Block {
-
+public:
     Point position;
 
     // Angle in radians between horizontal line in 2D space
@@ -55,8 +57,6 @@ class Block {
     // must be called before rendering if vertices have been modified since last render
     // returns triangle vertex indices
     std::vector<unsigned int> triangulate();
-
-public:
 
     // initialization
     Block(double cX = 0, double cY = 0, double width = 100, double height = 100, double mass = 1);
@@ -99,4 +99,6 @@ public:
 
     double moment_of_inertia(); // scary
 
+    void apply_accel(Vect2 accel);
+    void apply_velocity();
 };

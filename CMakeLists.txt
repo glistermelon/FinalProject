@@ -12,6 +12,7 @@ add_executable(
         src/Quadtree.cpp
         src/Vect2.cpp
         src/Triangle.cpp
+        src/Screen.cpp
 )
 
 target_include_directories(physiks PRIVATE include)

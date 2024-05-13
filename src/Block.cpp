@@ -515,6 +515,8 @@ Block::Block(double cX, double cY, double width, double height, double mass) {
     add_vertex(Point(cX + width, cY + height));
     add_vertex(Point(cX - width, cY + height));
     this->mass = mass;
+    velocity.x = 0;
+    velocity.y = 0;
 }
 
 void Block::normalize_rotation() {
@@ -694,6 +696,24 @@ Point Block::center_of_mass() {
 
 double Block::moment_of_inertia() { // TODO
     return 0;
+}
+
+#include <iostream>
+void Block::apply_accel(Vect2 accel) {
+    velocity.x += accel.x / fps;
+    velocity.y += accel.y / fps;
+}
+
+void Block::apply_velocity() {
+    double deltaX = velocity.x / fps;
+    double deltaY = velocity.y / fps;
+    std::cout << velocity.x << ", " << velocity.y << std::endl;
+    position.x += deltaX;
+    position.y += deltaY;
+    for (Point p : vertices) {
+        p.x += deltaX;
+        p.y += deltaY;
+    }
 }
 
 unsigned int Block::gl_program;

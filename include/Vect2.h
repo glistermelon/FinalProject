@@ -5,8 +5,8 @@ struct Vect2 {
     double value1, value2;
 
     // for ease when the vector refers to a spatial coordinate
-    const double& x = value1;
-    const double& y = value2;
+    double x = value1;
+    double y = value2;
 
     Vect2(); // set both values to zero
     Vect2(double v1, double v2);
