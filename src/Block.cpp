@@ -651,7 +651,7 @@ std::vector<Triangle> Block::get_triangulation() {
     return triangles;
 }
 
-// Gets the bounding box of the block, Top left point and width and height
+// Gets the bounding box of the block, bottom right point and width and height
 Rect Block::bounding_box() { // TODO
     Point * tLeft = &vertices[0];
     double width = 0, height = 0;
@@ -660,7 +660,7 @@ Rect Block::bounding_box() { // TODO
             width = std::abs(tLeft->x - vertices[i].x);
         if (height == 0 && tLeft->x == vertices[i].x)
             height = std::abs(tLeft->y - vertices[i].y);
-        if (tLeft->x >= vertices[i].x && tLeft->y <= vertices[i].y) {
+        if (tLeft->x >= vertices[i].x && tLeft->y >= vertices[i].y) {
             tLeft = &vertices[i];
         }
     }
@@ -698,7 +698,7 @@ double Block::moment_of_inertia() { // TODO
     return 0;
 }
 
-void Block::apply_accel(Vect2 accel) {
+void Block::apply_accel(const Vect2& accel) {
     if (is_static) return;
     velocity.x += accel.x / fps;
     velocity.y += accel.y / fps;
@@ -708,7 +708,6 @@ void Block::apply_angular_accel(double accel) {
     angular_velocity += accel / fps;
 }
 
-#include <iostream>
 void Block::apply_velocity() {
     if (is_static) return;
     double deltaX = velocity.x / fps;
@@ -717,9 +716,19 @@ void Block::apply_velocity() {
     position.y += deltaY;
 }
 
-Vect2 Block::distance(Point p) {
+Vect2 Block::distance(const Point& p) {
     Point c = center_of_mass();
     return Vect2(p.x - c.x, p.y - c.y);
+}
+
+bool Block::is_intersecting(Block& other) {
+    Rect oBox = other.bounding_box();
+    Rect bBox = bounding_box();
+    if (bBox.bot_right.x > oBox.bot_right.x + oBox.width) return false;
+    if (bBox.bot_right.x + bBox.width < oBox.bot_right.x) return false;
+    if (bBox.bot_right.y > oBox.bot_right.y + oBox.height) return false;
+    if (bBox.bot_right.y + bBox.height < oBox.bot_right.y) return false;
+    return true;
 }
 
 unsigned int Block::gl_program;

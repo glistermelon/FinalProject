@@ -97,13 +97,15 @@ public:
 
     Rect bounding_box(); // return a rectangular bounding box containing all the block's vertices
 
+    bool is_intersecting(Block& other);
+
     Point center_of_mass();
 
     double moment_of_inertia(); // scary
 
-    void apply_accel(Vect2 accel); // does not account for fps when applying acceleration
+    void apply_accel(const Vect2& accel); // does not account for fps when applying acceleration
     void apply_angular_accel(double accel);
     void apply_velocity();
 
-    Vect2 distance(Point);
+    Vect2 distance(const Point&);
 };

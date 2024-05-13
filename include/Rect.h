@@ -3,6 +3,6 @@
 #include <Point.h>
 
 struct Rect {
-    Point top_left;
+    Point bot_right;
     double width, height;
 };
