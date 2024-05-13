@@ -5,40 +5,7 @@
 #include "Block.h"
 #include "Vect2.h"
 
-class Collision {
-
-    Block* block1, *block2;
-    Point point1, point2;
-    Vect2 normal;
-
-    double p1_total_impulse = 0, p2_total_impulse = 0; // cumulative impulse
-
-    double calc_impulse(Point); // argument should be either point1 or point2
-
-public:
-
-    Collision(Block* b1, Block* b2, Point p1, Point p2, Vect2 normal);
-
-    void solve();
-
-};
-
-class CollisionGroup {
-
-    Block* block1, *block2;
-    Vect2 normal;
-
-    Vect2 calc_normal();
-    std::vector<Collision> find_collisions();
-
-public:
-
-    CollisionGroup(Block* b1, Block* b2);
-
-    void solve();
-
-};
-
+// https://box2d.org/files/ErinCatto_DynamicBVH_Full.pdf
 class QuadtreeNode {
 
     QuadtreeNode *top_left = nullptr,
@@ -48,15 +15,11 @@ class QuadtreeNode {
 
     Rect bounds;
 
-    std::vector<Block*> blocks;
 
-    bool are_colliding(Block* b1, Block* b2);
 
 public:
 
     void insert_block(Block*);
     void remove_block(Block*);
-
-    void handle_collisions(std::vector<Block*> higher_ups, std::vector<std::pair<Block*, Block*>> already_found);
 
 };
