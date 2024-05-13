@@ -13,6 +13,7 @@ add_executable(
         src/Vect2.cpp
         src/Triangle.cpp
         src/Screen.cpp
+        src/CollisionSolving.cpp
 )
 
 target_include_directories(physiks PRIVATE include)
