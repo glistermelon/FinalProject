@@ -37,7 +37,7 @@ Use the following formula.
 * $\lambda$ is the impulse (the return value).
 
 $$
-z = ||r||\sin\theta \\
+z = ||r||\sin\theta \rightarrow
 \lambda = (\frac{\hat{n}_x^2+\hat{n}_y^2}{m} + \frac{z^2}{I})^{-1}(\hat{n}_xv_x+\hat{n}_yv_y\pm z\omega)
 $$
 
