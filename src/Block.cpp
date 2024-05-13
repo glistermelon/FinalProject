@@ -725,6 +725,11 @@ void Block::apply_velocity(unsigned int fps) {
     position.y += deltaY;
 }
 
+Vect2 Block::distance(Point p) {
+    Point c = center_of_mass();
+    return Vect2(p.x - c.x, p.y - c.y);
+}
+
 unsigned int Block::gl_program;
 
 #endif

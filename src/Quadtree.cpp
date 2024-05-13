@@ -56,10 +56,16 @@ void Collision::solve() {
         impulse += delta_impulse;
         if (impulse < 0) impulse = 0;
         delta_impulse = impulse - prev_impulse;
-
-        // TODO: angular acceleration
+        
         block->apply_accel(
                 Vect2(normal.x / block->mass * delta_impulse, normal.y / block->mass * delta_impulse)
+        );
+
+        Vect2 r = block->distance(point);
+        block->apply_angular_accel(
+                r.magnitude() * sin(
+                        r.direction() - normal.direction()
+                ) / block->moment_of_inertia() * delta_impulse
         );
 
     }
@@ -76,7 +82,7 @@ Vect2 CollisionGroup::calc_normal() { // TODO
 }
 
 void CollisionGroup::solve() { // TODO
-    
+
 }
 
 

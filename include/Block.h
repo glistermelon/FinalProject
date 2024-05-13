@@ -105,4 +105,6 @@ public:
     void apply_angular_accel(double accel, unsigned int fps);
     void apply_angular_accel(double accel);
     void apply_velocity(unsigned int fps);
+
+    Vect2 distance(Point);
 };
