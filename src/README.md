@@ -3,12 +3,6 @@
 ### `Block::moment_of_inertia()`
 I haven't looked into this enough to know *for certain* if it is actually possible to implement given our constraints, but as the name implies, this should return the moment of inertia of the block. This will involve using Calculus to, from what I can tell, integrate over point masses within the block. I would use `Block::get_triangulation()` to get those point masses, since it is easy to discern whether or not a point is within a triangle.
 
-### `Block::bounding_box()`
-Returns an (unrotated) rectangle which perfectly contains the block. Unlike `Block::center_of_mass()`, the rotation and position of the block must be taken into account.
-
-### `Triangle::centroid()`
-Returns the centroid of the triangle.
-
 ### `QuadtreeNode::are_colliding(Block* b1, Block* b2)`
 Returns `true` if the two blocks are overlapping each-other (colliding), or `false` otherwise. This should involve two phases:
 * Check for possible collision using `Block::bounding_box()`. If the bounding boxes of the shapes do not overlap, then they are not colliding.
@@ -48,6 +42,12 @@ z = ||r||\sin\theta \\
 $$
 
 ## Completed (to be tested)
+
+### `Block::bounding_box()`
+Returns an (unrotated) rectangle which perfectly contains the block. Unlike `Block::center_of_mass()`, the rotation and position of the block must be taken into account.
+
+### `Triangle::centroid()`
+Returns the centroid of the triangle.
 
 ### `Block::get_triangulation()`
 Don't implement this (I've already started on it). However, **you have to understand what this function does** because it makes implementing all the other functions much easier. This function returns a list of triangles which make up the triangle decomposition of the block, as in the image below. Triangulation **has already been implemented** as part of the drawing process, but minor modifications need to be made to get the results from that process out of this function.
