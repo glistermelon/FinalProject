@@ -708,6 +708,14 @@ void Block::apply_accel(Vect2 accel) {
     apply_accel(accel, 1);
 }
 
+void Block::apply_angular_accel(double accel, unsigned int fps) {
+    angular_velocity += accel / fps;
+}
+
+void Block::apply_angular_accel(double accel) {
+    apply_angular_accel(accel, 1);
+}
+
 #include <iostream>
 void Block::apply_velocity(unsigned int fps) {
     if (is_static) return;
@@ -715,10 +723,6 @@ void Block::apply_velocity(unsigned int fps) {
     double deltaY = velocity.y / fps;
     position.x += deltaX;
     position.y += deltaY;
-    for (int i = 0; i < vertices.size(); i++) {
-        vertices[i].x += deltaX;
-        vertices[i].y += deltaY;
-    }
 }
 
 unsigned int Block::gl_program;

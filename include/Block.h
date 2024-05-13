@@ -39,6 +39,7 @@ public:
     std::vector<Point> vertices; // block is a polygon, with no holes
 
     Vect2 velocity;
+    double angular_velocity;
 
     double mass;
 
@@ -101,5 +102,7 @@ public:
 
     void apply_accel(Vect2 accel, unsigned int fps);
     void apply_accel(Vect2 accel); // does not account for fps when applying acceleration
+    void apply_angular_accel(double accel, unsigned int fps);
+    void apply_angular_accel(double accel);
     void apply_velocity(unsigned int fps);
 };
