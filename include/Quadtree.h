@@ -11,9 +11,9 @@ class Collision {
     Point point1, point2;
     Vect2 normal;
 
-    double total_impulse = 0; // cumulative impulse
+    double p1_total_impulse = 0, p2_total_impulse = 0; // cumulative impulse
 
-    double calc_impulse(Point*); // argument should be either point1 or point2
+    double calc_impulse(Point); // argument should be either point1 or point2
 
 public:
 

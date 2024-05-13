@@ -704,6 +704,10 @@ void Block::apply_accel(Vect2 accel, unsigned int fps) {
     velocity.y += accel.y / fps;
 }
 
+void Block::apply_accel(Vect2 accel) {
+    apply_accel(accel, 1);
+}
+
 #include <iostream>
 void Block::apply_velocity(unsigned int fps) {
     if (is_static) return;

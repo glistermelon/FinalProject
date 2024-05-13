@@ -100,5 +100,6 @@ public:
     double moment_of_inertia(); // scary
 
     void apply_accel(Vect2 accel, unsigned int fps);
+    void apply_accel(Vect2 accel); // does not account for fps when applying acceleration
     void apply_velocity(unsigned int fps);
 };

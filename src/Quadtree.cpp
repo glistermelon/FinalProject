@@ -42,12 +42,27 @@ void QuadtreeNode::remove_block(Block*) { // TODO
 Collision::Collision(Block* b1, Block* b2, Point p1, Point p2, Vect2 normal)
     : block1(b1), block2(b2), point1(p1), point2(p2), normal(normal) {}
 
-double Collision::calc_impulse(Point*) { // TODO
+double Collision::calc_impulse(Point) { // TODO
     return 0;
 }
 
-void Collision::solve() { // TODO
+void Collision::solve() {
+    for (const auto& point : { point1, point2 }) {
 
+        Block* block = point == point1 ? block1 : block2;
+        auto& impulse = point == point1 ? p1_total_impulse : p2_total_impulse;
+        auto prev_impulse = impulse;
+        auto delta_impulse = calc_impulse(point);
+        impulse += delta_impulse;
+        if (impulse < 0) impulse = 0;
+        delta_impulse = impulse - prev_impulse;
+
+        // TODO: angular acceleration
+        block->apply_accel(
+                Vect2(normal.x / block->mass * delta_impulse, normal.y / block->mass * delta_impulse)
+        );
+
+    }
 }
 
 std::vector<Collision> CollisionGroup::find_collisions() { // TODO
