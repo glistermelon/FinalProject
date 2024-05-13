@@ -78,8 +78,8 @@ int main() {
         if (durationInSeconds > interval_between_frames) {
             screen.update();
             prevTime = currTime;
+            glfwSwapBuffers(window);
         }
-        glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
