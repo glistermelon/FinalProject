@@ -76,6 +76,7 @@ int main() {
         std::chrono::duration<double> duration = currTime - prevTime;
         double durationInSeconds = static_cast<double>(duration.count());
         if (durationInSeconds > interval_between_frames) {
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
             screen.update();
             prevTime = currTime;
             glfwSwapBuffers(window);

@@ -698,7 +698,6 @@ double Block::moment_of_inertia() { // TODO
     return 0;
 }
 
-#include <iostream>
 void Block::apply_accel(Vect2 accel) {
     velocity.x += accel.x / fps;
     velocity.y += accel.y / fps;
@@ -707,7 +706,6 @@ void Block::apply_accel(Vect2 accel) {
 void Block::apply_velocity() {
     double deltaX = velocity.x / fps;
     double deltaY = velocity.y / fps;
-    std::cout << velocity.x << ", " << velocity.y << std::endl;
     position.x += deltaX;
     position.y += deltaY;
     for (Point p : vertices) {
