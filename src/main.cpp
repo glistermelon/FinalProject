@@ -69,7 +69,7 @@ int main() {
 
     const unsigned int fps = 30;
     
-    Screen screen(fps);
+    Screen screen;
     screen.blocks = blocks;
 
     double interval_between_frames = 1.0 / fps;
