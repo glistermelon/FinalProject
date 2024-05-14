@@ -73,6 +73,8 @@ void Vect2::flip() {
     value2 = -value2;
 }
 
-void Vect2::set_magnitude(double) {
-
+void Vect2::set_magnitude(double m) {
+    double f = m / magnitude();
+    value1 *= f;
+    value2 *= f;
 }
