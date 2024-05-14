@@ -58,6 +58,12 @@ Vect2 Vect2::operator-(Vect2 v) {
     return Vect2((value1 - v.x), (value2 - v.y));
 }
 
+Vect2 Vect2::operator-() {
+    auto v = *this;
+    v.flip();
+    return v;
+}
+
 double Vect2::dot_product(Vect2 v1, Vect2 v2) {
     return ((v1.x * v2.x) + (v1.y * v2.y));
 }
@@ -65,4 +71,8 @@ double Vect2::dot_product(Vect2 v1, Vect2 v2) {
 void Vect2::flip() {
     value1 = -value1;
     value2 = -value2;
+}
+
+void Vect2::set_magnitude(double) {
+
 }

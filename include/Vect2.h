@@ -4,7 +4,7 @@ struct Vect2 {
 
     double value1, value2;
 
-    // for ease when the vector refers to a spatial coordinate
+    // for ease when the vector refers to p1 spatial coordinate
     double x = value1;
     double y = value2;
 
@@ -22,9 +22,14 @@ struct Vect2 {
 
     Vect2 operator+(Vect2 v);
     Vect2 operator-(Vect2 v);
+    Vect2 operator-();
 
     static double dot_product(Vect2, Vect2);
 
     void flip();
+
+    void set_magnitude(double);
+
+    void rotate(double); // rotates counterclockwise
 
 };

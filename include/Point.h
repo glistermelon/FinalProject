@@ -17,3 +17,4 @@ public:
 
 std::ostream& operator<<(std::ostream& o, const Point& p);
 bool operator==(const Point& a, const Point& b);
+bool operator!=(const Point& a, const Point& b);

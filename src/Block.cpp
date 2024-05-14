@@ -1,6 +1,5 @@
 #include "../include/Block.h"
 
-#include <list>
 #include <stack>
 #include <vector>
 #include <algorithm>
@@ -15,91 +14,6 @@
 #include "shaders.h"
 #include "cmake_gen_shaders.hpp"
 #endif
-
-// Doubly connected edge list specialized for hole-less polygon triangulation
-// The following rules are NOT ENFORCED BY THE IMPLEMENTATION. Break them and you'll get unexpected behavior.
-// Instances should be initialized via a list of vertices, being along the outside edge of a closed polygon
-// Vertex class functions are notably dependent on this assumption. is_merge_vertex() and is_split_vertex()
-//   both make the assumption -that there are no interior edges in the DCEL, even as they are added.
-//   It is not a problem as long as the PolygonDCEL class is initialized as described.
-// This one is done for you: the face of every half edge is to its left,
-//   thus interior half edges to a face always go counterclockwise around it
-// Helpful resource: http://www.cs.ucr.edu/~eldawy/19SCS133/slides/CS133-09-DCEL.pdf
-class PolygonDCEL {
-
-public:
-
-    class Vertex;
-    class HalfEdge;
-    class Face;
-
-    struct Vertex {
-
-        Point point;
-        HalfEdge* half_edge = nullptr; // one of the half edges extending away from the vertex
-        Vertex* left = nullptr, *right = nullptr; // within the entire DCEL, not just one face
-
-        inline explicit Vertex(Point p) : point(p) {}
-
-        HalfEdge* get_interior_half_edge(); // if both half edges are interior to the PolygonDCEL, half_edge is returned
-
-        // https://sites.cs.ucsb.edu/~suri/cs235/Triangulation.pdf
-        [[nodiscard]] bool is_merge_vertex() const;
-        [[nodiscard]] bool is_split_vertex() const;
-
-    };
-
-    struct HalfEdge {
-
-        HalfEdge* twin = nullptr, *next = nullptr, *prev = nullptr;
-        Vertex* origin;
-        Face* face = nullptr; // if face is nullptr, the half-edge is exterior
-        double slope = std::numeric_limits<double>::infinity();
-
-        inline explicit HalfEdge(Vertex* v) : origin(v) {}
-
-        // sorts half edges going into a vertex in counterclockwise order starting from unit circle 0 rad
-        struct CcwSorter {
-            Point center;
-            double split_angle = 0;
-            bool comp(HalfEdge* e1, HalfEdge* e2) const;
-            explicit CcwSorter(Point center);
-        };
-
-    };
-
-    struct Face {
-        HalfEdge* half_edge;
-        bool is_reflex(Vertex*) const;
-    };
-
-private:
-
-    Vertex* left_most, *right_most;
-    std::list<HalfEdge*> edges; // no twins!
-    std::vector<Vertex*> vertices;
-    std::list<Face*> faces;
-
-public:
-
-    // WARNING! Expects NO interior vertices!
-    template <class PointIt> PolygonDCEL(PointIt begin, PointIt end);
-
-    ~PolygonDCEL();
-
-    // getters
-
-    [[nodiscard]] decltype(left_most) get_left_most() const;
-    [[nodiscard]] decltype(right_most) get_right_most() const;
-    [[nodiscard]] decltype(faces) get_faces() const;
-
-    // other functions
-
-    // returns nullptr if the requested edge is invalid
-    // see function definition for more details
-    HalfEdge* add_edge(Vertex* a, Vertex* b);
-
-};
 
 bool PolygonDCEL::Face::is_reflex(PolygonDCEL::Vertex* v) const {
 
@@ -139,6 +53,16 @@ bool PolygonDCEL::HalfEdge::CcwSorter::comp(PolygonDCEL::HalfEdge* e1, PolygonDC
 }
 
 PolygonDCEL::HalfEdge::CcwSorter::CcwSorter(Point center) : center(center) {}
+
+Vect2 PolygonDCEL::HalfEdge::get_normal() const {
+    Point this_p = origin->point;
+    Point next_p = next->origin->point;
+    auto a = atan((next_p.y - this_p.y) / (next_p.x - this_p.x));
+    Vect2 n(cos(a), sin(a));
+    n.rotate(M_PI / 2);
+    if (next_p.x < this_p.x) n.flip();
+    return n;
+}
 
 PolygonDCEL::HalfEdge* PolygonDCEL::Vertex::get_interior_half_edge() {
     return half_edge->face ? half_edge : half_edge->twin;
@@ -508,6 +432,7 @@ void Block::init_static_render_cache() {
 #endif
 
 Block::Block(double cX, double cY, double width, double height, double mass) {
+
     width /= 2; height /= 2;
     set_position(cX, cY);
     add_vertex(Point(cX - width, cY - height));
@@ -517,6 +442,18 @@ Block::Block(double cX, double cY, double width, double height, double mass) {
     this->mass = mass;
     velocity.x = 0;
     velocity.y = 0;
+
+    {
+        auto leftmost = vertices.begin();
+        for (auto it = vertices.begin(); it != vertices.end(); ++it)
+            if (it->x < leftmost->x) leftmost = it;
+        Point prev = leftmost == vertices.begin() ? vertices.back() : *leftmost;
+        Point next = leftmost + 1 == vertices.end() ? vertices.front() : *leftmost;
+        vertices_are_clockwise = next.y > prev.y;
+    }
+
+    dc_edge_list = PolygonDCEL(vertices.begin(), vertices.end());
+
 }
 
 void Block::normalize_rotation() {
@@ -638,7 +575,16 @@ void Block::render() const {
 
 }
 
-std::vector<Triangle> Block::get_triangulation() {
+std::vector<Segment> Block::get_edges() const {
+    std::vector<Segment> edges;
+    size_t num_vertices = vertices.size() - 1;
+    for (size_t i = 0; i < num_vertices; ++i)
+        edges.emplace_back(vertices[i], vertices[i + 1]);
+    edges.emplace_back(vertices.front(), vertices.back());
+    return edges;
+}
+
+std::vector<Triangle> Block::get_triangulation() const {
     size_t n = triangulation.size();
     std::vector<Triangle> triangles;
     for (size_t i = 0; i < n; i += 3) {
@@ -672,7 +618,7 @@ Point Block::center_of_mass() {
     double centery = 0;
     double area = 0;
     if (vertices.size() < 3){
-        return Point(); // May want to add a signal if the polygon doesn't have enough vertices
+        return Point(); // May want to add p1 signal if the polygon doesn't have enough vertices
     }
 
     for(size_t i = 0; i < vertices.size(); i++){
@@ -705,6 +651,7 @@ void Block::apply_accel(const Vect2& accel) {
 }
 
 void Block::apply_angular_accel(double accel) {
+    if (is_static) return;
     angular_velocity += accel / fps;
 }
 
@@ -716,7 +663,7 @@ void Block::apply_velocity() {
     position.y += deltaY;
 }
 
-Vect2 Block::distance(const Point& p) {
+Vect2 Block::displacement_rel(const Point& p) {
     Point c = center_of_mass();
     return Vect2(p.x - c.x, p.y - c.y);
 }
@@ -731,40 +678,37 @@ bool Block::is_intersecting(Block& other) {
     return true;
 }
 
-std::vector<Point> Block::find_intersections(Block &other) {
-    auto vertices1 = vertices;
-    auto vertices2 = other.vertices;
-    size_t num_vertices1 = vertices1.size();
-    size_t num_vertices2 = vertices2.size();
-    vertices1.push_back(vertices1.front());
-    vertices2.push_back(vertices2.front());
-    std::vector<Point> intersections;
-    // not currently a priority but this is super unoptimized yikes
-    for (size_t i1 = 0; i1 < num_vertices1; ++i1) {
-        for (size_t i2 = 0; i2 < num_vertices2; ++i2) {
+std::vector<Point> Block::find_critical_vertices(Block &other) const {
 
-            auto p1 = to_world_coords(vertices1[i1]);
-            auto p1_twin = to_world_coords(vertices[i1 + 1]);
-            auto p2 = to_world_coords(vertices2[i2]);
-            auto p2_twin = to_world_coords(vertices[i2 + 1]);
-            auto s1 = (p1.y - p1_twin.y) / (p1.x - p1_twin.x);
-            auto s2 = (p2.y - p2_twin.y) - (p2.x - p2_twin.x);
-            auto x = p2.y - p1.y - s2 * p2.x + s1 * p1.x / (s1 - s2);
-
-            auto domain1_left = p1.x;
-            auto domain1_right = p1_twin.x;
-            if (domain1_left > domain1_right) std::swap(domain1_left, domain1_right);
-
-            auto domain2_left = p1.x;
-            auto domain2_right = p1_twin.x;
-            if (domain2_left > domain2_right) std::swap(domain2_left, domain2_right);
-
-            if (x >= domain1_left && x >= domain2_left && x <= domain1_right && x <= domain2_right)
-                intersections.emplace_back(x, s1 * (x - p1.x) + p1.y);
-
+    // unoptimized but optimization is not currently a priority
+    std::vector<Point> critical_vertices;
+    auto triangles = other.get_triangulation();
+    for (const auto& v : vertices) {
+        for (const auto& triangle : triangles) {
+            auto p = to_world_coords(v);
+            if (triangle.contains(p))
+                critical_vertices.push_back(p);
         }
     }
-    return intersections;
+    return critical_vertices;
+
+}
+
+Block Block::get_shadow() const {
+    Block s = *this;
+    s.angular_velocity = -s.angular_velocity;
+    s.velocity = -s.velocity;
+    s.apply_velocity();
+    s.angular_velocity = -s.angular_velocity;
+    s.velocity = -s.velocity;
+    return s;
+}
+
+Vect2 Block::get_normal(Segment edge) const {
+    auto half_edge = dc_edge_list.get_faces().front()->half_edge;
+    while (half_edge->origin->point != edge.p1) half_edge = half_edge->next;
+    if (half_edge->next->origin->point != edge.p2) half_edge = half_edge->prev;
+    return half_edge->get_normal();
 }
 
 unsigned int Block::gl_program;

@@ -14,6 +14,7 @@ add_executable(
         src/Triangle.cpp
         src/Screen.cpp
         src/CollisionSolving.cpp
+        src/Segment.cpp
 )
 
 target_include_directories(physiks PRIVATE include)

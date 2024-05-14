@@ -10,4 +10,6 @@ struct Triangle {
 
     Point centroid(); // this is also the triangle's center of mass!
 
+    bool contains(Point) const;
+
 };

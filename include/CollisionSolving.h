@@ -29,10 +29,13 @@ public:
 
 class CollisionGroup {
 
+    const unsigned int num_iterations = 5;
+
     Block* block1, *block2;
     Vect2 normal;
+    std::vector<Collision> collisions;
 
-    Vect2 calc_normal();
+    Vect2 calc_normal(bool& optimal);
 
 public:
 
