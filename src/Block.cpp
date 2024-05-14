@@ -724,10 +724,8 @@ Vect2 Block::distance(const Point& p) {
 bool Block::is_intersecting(Block& other) {
     Rect oBox = other.bounding_box();
     Rect bBox = bounding_box();
-    if (bBox.bot_right.x > oBox.bot_right.x + oBox.width) return false;
-    if (bBox.bot_right.x + bBox.width < oBox.bot_right.x) return false;
-    if (bBox.bot_right.y > oBox.bot_right.y + oBox.height) return false;
-    if (bBox.bot_right.y + bBox.height < oBox.bot_right.y) return false;
+    if (bBox.bot_left.x > oBox.bot_left.x + oBox.width || bBox.bot_left.x + bBox.width < oBox.bot_left.x) return false;
+    if (bBox.bot_left.y > oBox.bot_left.y + oBox.height || bBox.bot_left.y + bBox.height < oBox.bot_left.y) return false;
     return true;
 }
 
