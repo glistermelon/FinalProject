@@ -519,6 +519,18 @@ Block::Block(double cX, double cY, double width, double height, double mass) {
     velocity.y = 0;
 }
 
+Block::Block(double cX = 0, double cY = 0, double width = 100, double height = 100, double xVel, double yVel, double mass = 1) {
+    width /= 2; height /= 2;
+    set_position(cX, cY);
+    add_vertex(Point(cX - width, cY - height));
+    add_vertex(Point(cX + width, cY - height));
+    add_vertex(Point(cX + width, cY + height));
+    add_vertex(Point(cX - width, cY + height));
+    this->mass = mass;
+    velocity.x = xVel;
+    velocity.y = yVel;
+}
+
 void Block::normalize_rotation() {
     rotation = normalize_angle(rotation);
 }

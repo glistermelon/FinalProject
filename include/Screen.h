@@ -10,12 +10,11 @@
 
 // Handles updating blocks on screen, collisions
 class Screen {
+public:
     Vect2 gravity_accel;
     QuadtreeNode head; // The right of head is the root
-
-    public:
-        int ind = 0;
-        Screen();
-        std::vector<Block*> blocks;
-        void update();
+    int ind = 0;
+    Screen();
+    std::vector<Block*> blocks;
+    void update();
 };

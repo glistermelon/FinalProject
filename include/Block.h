@@ -62,6 +62,7 @@ public:
 
     // initialization
     Block(double cX = 0, double cY = 0, double width = 100, double height = 100, double mass = 1);
+    Block(double cX = 0, double cY, double width, double height, double xVel, double yVel, double mass);
 
 #ifndef REPLIT
     static void init_static_render_cache();

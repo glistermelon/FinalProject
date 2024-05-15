@@ -47,30 +47,43 @@ int main() {
 
     // Example of rendering a yellow square
     // Anyone can delete this if you want to
-    Block b {100, 200, 100, 200, 1};
-    blocks.push_back(&b);
-    Block b2 {500, 400, 300, 200, 1};
-    blocks.push_back(&b2);
+    std::cout << "How many non-static blocks do you want?" << std::endl;
+    int n;
+    std::cin >> n;
+    std::cout << "Please input: centerX centerY width height velocityX velocityY mass" << std::endl;
+    for (int i = 0; i < n; i++) {
+        double cX,cY,w,h,vX,vY,m;
+        std::cin >> cX >> cY >> w >> h >> vX >> vY >> m;
+        blocks.push_back(new Block(cX, cY, w, h, vX, vY, m));
+    }
+    std::cout << "How many static blocks do you want?" << std::endl;
+    std::cin >> n;
+    std::cout << "Please input: centerX centerY width height velocityX velocityY mass" << std::endl;
+    for (int i = 0; i < n; i++) {
+        double cX,cY,w,h,vX,vY,m;
+        std::cin >> cX >> cY >> w >> h >> vX >> vY >> m;
+        blocks.push_back(new Block(cX, cY, w, h, vX, vY, m));
+        blocks[blocks.size() - 1]->is_static = true;
+    }
 
     // Ground
-    Block b3 {500, 50, 2000, 10, 0};
+    Block b3 {500, 0, 2000, 10, 0, 0, 1};
     b3.is_static = true;
     blocks.push_back(&b3);
 
 #ifndef REPLIT
-    b.update_render_cache(); // must be called after vertices are modified
-    for (auto* block : blocks) block->update_render_cache();
+    for (auto* block : blocks) block->update_render_cache();  // must be called after vertices are modified
     for (auto* block : blocks) block->set_color(Color::WHITE);
 #endif
     
-    b.set_color(Color::WHITE); // or Color(255, 255, 0)
-
 #ifndef REPLIT
 
     const unsigned int fps = 30;
     
     Screen screen;
     screen.blocks = blocks;
+
+    for (Block* block : blocks) screen.head.right->insert_block(screen.head.right, block);
 
     double interval_between_frames = 1.0 / fps;
     auto startTime = std::chrono::high_resolution_clock::now(), currTime = startTime, prevTime = startTime;
