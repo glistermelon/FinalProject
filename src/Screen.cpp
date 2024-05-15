@@ -10,6 +10,8 @@ Screen::Screen() {
 
     head = QuadtreeNode();
     head.right = new QuadtreeNode();
+    head.right->parent = &head;
+    head.right->is_leaf = true;
     head.left = nullptr;
     // Add ground
 
@@ -36,6 +38,8 @@ void Screen::update() {
 
     // Handle Collisions
     std::vector<CollisionGroup*> collisions = head.right->find_collisions(head.right);
+    // if (collisions.size() > 0)
+    //     std::cout << "Collide" << std::endl;
 
     // Add gravity
     for (Block* block : blocks) {

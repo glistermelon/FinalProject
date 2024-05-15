@@ -507,19 +507,7 @@ void Block::init_static_render_cache() {
 }
 #endif
 
-Block::Block(double cX, double cY, double width, double height, double mass) {
-    width /= 2; height /= 2;
-    set_position(cX, cY);
-    add_vertex(Point(cX - width, cY - height));
-    add_vertex(Point(cX + width, cY - height));
-    add_vertex(Point(cX + width, cY + height));
-    add_vertex(Point(cX - width, cY + height));
-    this->mass = mass;
-    velocity.x = 0;
-    velocity.y = 0;
-}
-
-Block::Block(double cX = 0, double cY = 0, double width = 100, double height = 100, double xVel, double yVel, double mass = 1) {
+Block::Block(double cX, double cY, double width, double height, double xVel, double yVel, double mass) {
     width /= 2; height /= 2;
     set_position(cX, cY);
     add_vertex(Point(cX - width, cY - height));
@@ -726,11 +714,19 @@ void Block::apply_velocity() {
     double deltaY = velocity.y / fps;
     position.x += deltaX;
     position.y += deltaY;
+    for (size_t i = 0; i < vertices.size(); i++) {
+        vertices[i].x += deltaX;
+        vertices[i].y += deltaY;
+    }
 }
 
 Vect2 Block::distance(const Point& p) {
     Point c = center_of_mass();
     return Vect2(p.x - c.x, p.y - c.y);
+}
+
+bool Block::operator== (const Block& other) {
+    return *this == other;
 }
 
 bool Block::is_intersecting(Block& other) {
@@ -741,41 +737,41 @@ bool Block::is_intersecting(Block& other) {
     return true;
 }
 
-std::vector<Point> Block::find_intersections(Block &other) {
-    auto vertices1 = vertices;
-    auto vertices2 = other.vertices;
-    size_t num_vertices1 = vertices1.size();
-    size_t num_vertices2 = vertices2.size();
-    vertices1.push_back(vertices1.front());
-    vertices2.push_back(vertices2.front());
-    std::vector<Point> intersections;
-    // not currently a priority but this is super unoptimized yikes
-    for (size_t i1 = 0; i1 < num_vertices1; ++i1) {
-        for (size_t i2 = 0; i2 < num_vertices2; ++i2) {
+// std::vector<Point> Block::find_intersections(Block &other) {
+//     auto vertices1 = vertices;
+//     auto vertices2 = other.vertices;
+//     size_t num_vertices1 = vertices1.size();
+//     size_t num_vertices2 = vertices2.size();
+//     vertices1.push_back(vertices1.front());
+//     vertices2.push_back(vertices2.front());
+//     std::vector<Point> intersections;
+//     // not currently a priority but this is super unoptimized yikes
+//     for (size_t i1 = 0; i1 < num_vertices1; ++i1) {
+//         for (size_t i2 = 0; i2 < num_vertices2; ++i2) {
 
-            auto p1 = to_world_coords(vertices1[i1]);
-            auto p1_twin = to_world_coords(vertices[i1 + 1]);
-            auto p2 = to_world_coords(vertices2[i2]);
-            auto p2_twin = to_world_coords(vertices[i2 + 1]);
-            auto s1 = (p1.y - p1_twin.y) / (p1.x - p1_twin.x);
-            auto s2 = (p2.y - p2_twin.y) - (p2.x - p2_twin.x);
-            auto x = p2.y - p1.y - s2 * p2.x + s1 * p1.x / (s1 - s2);
+//             auto p1 = to_world_coords(vertices1[i1]);
+//             auto p1_twin = to_world_coords(vertices[i1 + 1]);
+//             auto p2 = to_world_coords(vertices2[i2]);
+//             auto p2_twin = to_world_coords(vertices[i2 + 1]);
+//             auto s1 = (p1.y - p1_twin.y) / (p1.x - p1_twin.x);
+//             auto s2 = (p2.y - p2_twin.y) - (p2.x - p2_twin.x);
+//             auto x = p2.y - p1.y - s2 * p2.x + s1 * p1.x / (s1 - s2);
 
-            auto domain1_left = p1.x;
-            auto domain1_right = p1_twin.x;
-            if (domain1_left > domain1_right) std::swap(domain1_left, domain1_right);
+//             auto domain1_left = p1.x;
+//             auto domain1_right = p1_twin.x;
+//             if (domain1_left > domain1_right) std::swap(domain1_left, domain1_right);
 
-            auto domain2_left = p1.x;
-            auto domain2_right = p1_twin.x;
-            if (domain2_left > domain2_right) std::swap(domain2_left, domain2_right);
+//             auto domain2_left = p1.x;
+//             auto domain2_right = p1_twin.x;
+//             if (domain2_left > domain2_right) std::swap(domain2_left, domain2_right);
 
-            if (x >= domain1_left && x >= domain2_left && x <= domain1_right && x <= domain2_right)
-                intersections.emplace_back(x, s1 * (x - p1.x) + p1.y);
+//             if (x >= domain1_left && x >= domain2_left && x <= domain1_right && x <= domain2_right)
+//                 intersections.emplace_back(x, s1 * (x - p1.x) + p1.y);
 
-        }
-    }
-    return intersections;
-}
+//         }
+//     }
+//     return intersections;
+// }
 
 unsigned int Block::gl_program;
 

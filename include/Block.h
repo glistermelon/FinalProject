@@ -61,8 +61,7 @@ public:
     std::vector<unsigned int> triangulate();
 
     // initialization
-    Block(double cX = 0, double cY = 0, double width = 100, double height = 100, double mass = 1);
-    Block(double cX = 0, double cY, double width, double height, double xVel, double yVel, double mass);
+    Block(double cX, double cY, double width, double height, double xVel, double yVel, double mass);
 
 #ifndef REPLIT
     static void init_static_render_cache();
@@ -102,7 +101,7 @@ public:
 
     // finds every intersection point between two blocks
     // intended to be called if it is already known that this block and the other block are colliding
-    std::vector<Point> find_intersections(Block& other);
+    // std::vector<Point> find_intersections(Block& other);
 
     Point center_of_mass();
 
@@ -115,5 +114,7 @@ public:
     Vect2 distance(const Point&);
 
     Point to_world_coords(Point);
+
+    bool operator==(const Block& other);
 
 };

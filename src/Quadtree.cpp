@@ -56,7 +56,7 @@ void QuadtreeNode::swap(QuadtreeNode * q1, QuadtreeNode * q2) {
 }
 
 void QuadtreeNode::insert_block(QuadtreeNode * tree, Block* block) {
-    if (tree->block == nullptr) {
+    if (tree->block == nullptr && tree->is_leaf) {
         tree->block = block;
         tree->is_leaf = true;
         Rect bBox = block->bounding_box();
@@ -123,7 +123,7 @@ void QuadtreeNode::insert_block(QuadtreeNode * tree, Block* block) {
 
 QuadtreeNode* QuadtreeNode::remove_block() {
     if (!is_leaf || parent->left == nullptr) {
-        return;
+        return nullptr;
     }
     if (parent->left == this) {
         if (parent->parent->right == parent) {
