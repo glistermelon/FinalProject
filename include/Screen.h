@@ -11,9 +11,10 @@
 
 // Handles updating blocks on screen, collisions
 class Screen {
-    Vect2 gravity_accel;
+
 
     public:
+    Vect2 gravity_accel;
         int ind = 0;
         Screen();
         std::vector<Block*> blocks;

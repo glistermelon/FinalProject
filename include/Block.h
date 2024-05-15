@@ -132,7 +132,7 @@ public:
     PolygonDCEL* dc_edge_list;
 
     Vect2 velocity;
-    double angular_velocity;
+    double angular_velocity = 0;
 
     double mass;
 
@@ -151,6 +151,9 @@ public:
     // must be called before rendering if vertices have been modified since last render
     // returns triangle vertex indices
     std::vector<unsigned int> triangulate();
+
+    // As long as blocks are always rectangles
+    double rect_width, rect_height;
 
     // initialization
     Block(double cX = 0, double cY = 0, double width = 100, double height = 100, double mass = 1);
@@ -202,7 +205,7 @@ public:
 
     Point center_of_mass() const;
 
-    double moment_of_inertia(); // scary
+    double moment_of_inertia() const; // scary
 
     void apply_accel(const Vect2& accel); // does not account for fps when applying acceleration
     void apply_angular_accel(double accel);

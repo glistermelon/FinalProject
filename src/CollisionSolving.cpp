@@ -10,11 +10,12 @@ Collision::Collision(Block* b1, Block* b2, Point p, Vect2 normal)
 }
 
 Vect2 Collision::calc_rel_velocity() {
-    return (block2->velocity - block1->velocity)
-           + Vect3::cross_product(block2->angular_velocity_vector(), r2.to_3d()).to_2d()
-           - Vect3::cross_product(block1->angular_velocity_vector(), r1.to_3d()).to_2d();
-
-    Vect3::cross_product(block1->angular_velocity_vector(), r1.to_3d());
+    auto a = (block2->velocity - block1->velocity);
+    auto b = Vect3::cross_product(block2->angular_velocity_vector(), r2.to_3d());
+    auto c = Vect3::cross_product(block1->angular_velocity_vector(), r1.to_3d());
+    return a
+           + b.to_2d()
+           - c.to_2d();
 }
 
 Vect2 Collision::calc_impulse() {
@@ -23,20 +24,24 @@ Vect2 Collision::calc_impulse() {
     Vect3 v = Vect3::cross_product(1/i1 * Vect3::cross_product(r1.to_3d(), normal.to_3d()), r1.to_3d())
               + Vect3::cross_product(1/i2 * Vect3::cross_product(r2.to_3d(), normal.to_3d()), r2.to_3d());
     double k = 1/block1->mass + 1/block2->mass + Vect2::dot_product(v.to_2d(), normal);
-    return normal * (Vect2::dot_product(-calc_rel_velocity(), normal) / k);
+    auto vr = calc_rel_velocity();
+    return normal * (Vect2::dot_product(-vr, normal) / k);
 }
 
 void Collision::solve() {
 
-    auto& impulse = total_impulse;
-    auto prev_impulse = impulse;
+    double impulse = total_impulse;
+    double prev_impulse = impulse;
     auto delta_impulse = calc_impulse();
-    impulse += delta_impulse.magnitude();
+    double delta_magnitude = delta_impulse.magnitude();
+    if ((normal.x < 0 && delta_impulse.x > 0) || (normal.x > 0 && delta_impulse.x < 0))
+        delta_magnitude = -delta_magnitude;
+    impulse += delta_magnitude;
     if (impulse < 0) impulse = 0;
     delta_impulse.set_magnitude(impulse - prev_impulse);
 
-    block1->apply_accel(-delta_impulse / block1->mass);
-    block2->apply_accel(delta_impulse / block2->mass);
+    block1->apply_accel(-delta_impulse / block1->mass * 2);
+    block2->apply_accel(delta_impulse / block2->mass * 2);
     block1->apply_angular_accel(
             (-1/block1->moment_of_inertia() * Vect3::cross_product(r1.to_3d(), delta_impulse.to_3d())).magnitude()
     );
@@ -94,7 +99,7 @@ void CollisionGroup::solve() {
     for (auto p : block1->find_critical_vertices(*block2))
         collisions.emplace_back(block1, block2, p, normal);
 
-    for (unsigned int i = 0; i < num_iterations; ++i)
+    for (unsigned int i = 0; i < 1; ++i)
         for (auto& c : collisions) c.solve();
 
 }

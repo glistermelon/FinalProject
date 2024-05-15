@@ -49,10 +49,10 @@ int main() {
 
     // Example of rendering a yellow square
     // Anyone can delete this if you want to
-    Block b(100, 300, 100, 100, 1);
+    Block b(100, 900, 100, 100, 1);
     b.set_rotation(M_PI/4);
     blocks.push_back(&b);
-    Block b2(100, 100, 100, 100, 1);
+    Block b2(100, 300, 100, 100, 1);
     blocks.push_back(&b2);
 
     // Ground
@@ -77,21 +77,25 @@ int main() {
 
     int frameCounter = 0;
 
+    bool done = false;
+
     while (!glfwWindowShouldClose(window)) {
         glUseProgram(Block::get_gl_program());
         currTime = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> duration = currTime - prevTime;
         double durationInSeconds = static_cast<double>(duration.count());
+
+
         if (durationInSeconds > interval_between_frames) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
+            
             screen.update();
             prevTime = currTime;
             glfwSwapBuffers(window);
 
-            b2.apply_accel(Vect2(0, gravity));
-            bool done = false;
-            if (!done && b.position.y - sqrt(2) * 50 < 150) {
+            if (!done) b2.apply_accel(Vect2(0, 9.81));
+
+            if (!done && b.position.y - sqrt(2) * 50 < 350) {
                 done = true;
                 auto cg = CollisionGroup(&b, &b2);
                 cg.solve();

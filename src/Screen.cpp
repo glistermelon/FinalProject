@@ -22,7 +22,7 @@ void Screen::update() {
     }
 
     // Handle Collisions
-    
+
 
     // Add gravity
     for (Block* block : blocks) {

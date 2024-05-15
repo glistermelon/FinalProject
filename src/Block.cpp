@@ -431,7 +431,7 @@ void Block::init_static_render_cache() {
 }
 #endif
 
-Block::Block(double cX, double cY, double width, double height, double mass) {
+Block::Block(double cX, double cY, double width, double height, double mass) : rect_width(width), rect_height(height) {
 
     width /= 2; height /= 2;
     set_position(cX, cY);
@@ -636,19 +636,19 @@ Point Block::center_of_mass() const {
     return Point(centerx, centery);
 }
 
-double Block::moment_of_inertia() { // TODO
-    return 0;
+double Block::moment_of_inertia() const { // TODO: make this work for any polygon, not just rectangles
+    return rect_width * pow(rect_height, 3) / 12;
 }
 
 void Block::apply_accel(const Vect2& accel) {
     if (is_static) return;
-    velocity.x += accel.x / fps;
-    velocity.y += accel.y / fps;
+    velocity.x += accel.x;
+    velocity.y += accel.y;
 }
 
 void Block::apply_angular_accel(double accel) {
     if (is_static) return;
-    angular_velocity += accel / fps;
+    angular_velocity += accel;
 }
 
 void Block::apply_velocity() {
@@ -704,7 +704,7 @@ Block Block::get_shadow() const {
 Vect2 Block::get_normal(Segment edge) const {
     auto half_edge = dc_edge_list->get_faces().front()->half_edge;
     while (!half_edge->origin->point.epsilon_eq(edge.p1)) half_edge = half_edge->next;
-    if (half_edge->next->origin->point != edge.p2) half_edge = half_edge->prev;
+    if (!half_edge->next->origin->point.epsilon_eq(edge.p2)) half_edge = half_edge->prev;
     return half_edge->get_normal();
 }
 
