@@ -45,8 +45,9 @@ int main() {
 
 #endif
 
-    // Example of rendering a yellow square
-    // Anyone can delete this if you want to
+    ////////////////////
+    /*** User Input ***/
+    ////////////////////
     std::cout << "How many non-static blocks do you want?" << std::endl;
     int n;
     std::cin >> n;
