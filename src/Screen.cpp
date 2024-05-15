@@ -38,8 +38,8 @@ void Screen::update() {
 
     // Handle Collisions
     std::vector<CollisionGroup*> collisions = head.right->find_collisions(head.right);
-    // if (collisions.size() > 0)
-    //     std::cout << "Collide" << std::endl;
+     if (collisions.size() > 0)
+         std::cout << "Collide" << std::endl;
 
     // Add gravity
     for (Block* block : blocks) {
