@@ -4,14 +4,13 @@
 
 struct Point {
 
-    friend std::ostream& operator<<(std::ostream& o, const Point& p);
-    friend bool operator==(const Point& a, const Point& b);
-
     double x, y;
 
-public:
-
     Point(double x = 0, double y = 0);
+
+    void revolve(double angle);
+
+    bool epsilon_eq(Point other) const;
 
 };
 

@@ -4,13 +4,13 @@
 #include <assert.h>
 
 Vect2::Vect2() {
-    value1 = 0;
-    value2 = 0;
+    x = 0;
+    y = 0;
 }
 
 Vect2::Vect2(double v1, double v2) {
-    value1 = v1;
-    value2 = v2;
+    x = v1;
+    y = v2;
 }
 
 double Vect2::direction() {
@@ -27,7 +27,7 @@ double Vect2::direction() {
         }
     }
     else {
-        double angleRadians = atan(value2 / value1);
+        double angleRadians = atan(y / x);
         if (x < 0) {
             angleRadians += M_PI;
         }
@@ -39,23 +39,23 @@ double Vect2::direction() {
 }
 
 double Vect2::magnitude() {
-    return sqrt(pow(value1, 2) + pow(value2, 2));
+    return sqrt(pow(x, 2) + pow(y, 2));
 }
 
 Vect2 Vect2::operator*(double scalar) {
-    return Vect2((value1 * scalar), (value2 * scalar));
+    return Vect2((x * scalar), (y * scalar));
 }
 
 Vect2 Vect2::operator/(double scalar) {
-    return Vect2((value1 / scalar), (value2 / scalar));
+    return Vect2((x / scalar), (y / scalar));
 }
 
 Vect2 Vect2::operator+(Vect2 v) {
-    return Vect2((value1 + v.x), (value2 + v.y));
+    return Vect2((x + v.x), (y + v.y));
 }
 
 Vect2 Vect2::operator-(Vect2 v) {
-    return Vect2((value1 - v.x), (value2 - v.y));
+    return Vect2((x - v.x), (y - v.y));
 }
 
 Vect2 Vect2::operator-() {
@@ -69,12 +69,78 @@ double Vect2::dot_product(Vect2 v1, Vect2 v2) {
 }
 
 void Vect2::flip() {
-    value1 = -value1;
-    value2 = -value2;
+    x = -x;
+    y = -y;
 }
 
 void Vect2::set_magnitude(double m) {
     double f = m / magnitude();
-    value1 *= f;
-    value2 *= f;
+    x *= f;
+    y *= f;
+}
+
+void Vect2::rotate(double angle) {
+    double m = magnitude();
+    angle += direction();
+    x = m * cos(angle);
+    y = m * sin(angle);
+}
+
+Vect3 Vect2::to_3d() const {
+    return Vect3(x, y, 0);
+}
+
+Vect3::Vect3() : x(0), y(0), z(0) {}
+
+Vect3::Vect3(double v1, double v2, double v3) : x(v1), y(v2), z(v3) {}
+
+double Vect3::magnitude() {
+    return sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2));
+}
+
+Vect3 Vect3::operator*(double scalar) {
+    return Vect3((x * scalar), (y * scalar), (z * scalar));
+}
+
+Vect3 Vect3::operator/(double scalar) {
+    return Vect3((x / scalar), (y / scalar), (z / scalar));
+}
+
+Vect3 Vect3::operator+(Vect3 v) {
+    return Vect3((x + v.x), (y + v.y), (z + v.z));
+}
+
+Vect3 Vect3::operator-(Vect3 v) {
+    return Vect3((x - v.x), (y - v.y), (z - v.z));
+}
+
+Vect3 Vect3::operator-() {
+    auto v = *this;
+    v.flip();
+    return v;
+}
+
+void Vect3::flip() {
+    x = -x;
+    y = -y;
+    z = -z;
+}
+
+void Vect3::set_magnitude(double m) {
+    double f = m / magnitude();
+    x *= f;
+    y *= f;
+    z *= f;
+}
+
+Vect3 Vect3::cross_product(Vect3 v1, Vect3 v2) {
+    return Vect3(v1.y * v2.z - v1.z * v2.y, v1.z * v2.x - v1.x * v2.z, v1.x * v2.y - v1.y * v2.x);
+}
+
+Vect2 Vect3::to_2d() const {
+    return Vect2(x, y);
+}
+
+Vect3 operator*(double n, Vect3 v) {
+    return v * n;
 }

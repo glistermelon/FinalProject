@@ -97,6 +97,7 @@ public:
 
     // WARNING! Expects NO interior vertices!
     template <class PointIt> PolygonDCEL(PointIt begin, PointIt end);
+    PolygonDCEL() = default;
 
     ~PolygonDCEL();
 
@@ -128,7 +129,7 @@ public:
     double rotation = 0;
 
     std::vector<Point> vertices; // block is p1 polygon, with no holes
-    PolygonDCEL dc_edge_list;
+    PolygonDCEL* dc_edge_list;
 
     Vect2 velocity;
     double angular_velocity;
@@ -153,6 +154,8 @@ public:
 
     // initialization
     Block(double cX = 0, double cY = 0, double width = 100, double height = 100, double mass = 1);
+
+    inline ~Block() { delete dc_edge_list; }
 
 #ifndef REPLIT
     static void init_static_render_cache();
@@ -197,7 +200,7 @@ public:
     // (might crash otherwise, unsure; either way it is not designed nor optimized for DETECTING collisions)
     std::vector<Point> find_critical_vertices(Block& other) const;
 
-    Point center_of_mass();
+    Point center_of_mass() const;
 
     double moment_of_inertia(); // scary
 
@@ -213,5 +216,7 @@ public:
     Block get_shadow() const; // returns a block in the location where the block was one frame ago
 
     Vect2 get_normal(Segment edge) const; // edge should be in relative coords
+
+    Vect3 angular_velocity_vector() const;
 
 };

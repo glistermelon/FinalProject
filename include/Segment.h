@@ -18,6 +18,8 @@ public:
 
     inline decltype(slope) get_slope() { return slope; }
 
+    bool contains_point(Point) const;
+
     bool intersects(Segment other) const;
 
     double get_y(double x) const; // x relative to p1.x

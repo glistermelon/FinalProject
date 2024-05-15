@@ -435,24 +435,14 @@ Block::Block(double cX, double cY, double width, double height, double mass) {
 
     width /= 2; height /= 2;
     set_position(cX, cY);
-    add_vertex(Point(cX - width, cY - height));
-    add_vertex(Point(cX + width, cY - height));
-    add_vertex(Point(cX + width, cY + height));
-    add_vertex(Point(cX - width, cY + height));
+    add_vertex(Point(-width, -height));
+    add_vertex(Point(width, -height));
+    add_vertex(Point(width, height));
+    add_vertex(Point(-width,height));
     this->mass = mass;
     velocity.x = 0;
     velocity.y = 0;
-
-    {
-        auto leftmost = vertices.begin();
-        for (auto it = vertices.begin(); it != vertices.end(); ++it)
-            if (it->x < leftmost->x) leftmost = it;
-        Point prev = leftmost == vertices.begin() ? vertices.back() : *leftmost;
-        Point next = leftmost + 1 == vertices.end() ? vertices.front() : *leftmost;
-        vertices_are_clockwise = next.y > prev.y;
-    }
-
-    dc_edge_list = PolygonDCEL(vertices.begin(), vertices.end());
+    dc_edge_list = new PolygonDCEL(vertices.begin(), vertices.end());
 
 }
 
@@ -537,15 +527,13 @@ void Block::render() const {
     GLint viewport[4]; // origin x, origin y, width, height
     glGetIntegerv(GL_VIEWPORT, viewport);
 
+    // Place origin at center of mass
+    Point center = center_of_mass();
+    transform = glm::translate(transform, glm::vec3(-center.x, -center.y,0.0f));
+
     // Scale down to fit into the viewport
     transform = glm::scale(
-            transform, glm::vec3(2.0 / viewport[2], 2.0 / viewport[3], 1.0)
-    );
-
-    // Rotate the block
-    transform = glm::rotate(
-            transform, (float)rotation,
-            glm::vec3(0.0f, 0.0f, 1.0f) // about the center
+            transform, glm::vec3(2.0 / viewport[2] * pixels_per_meter, 2.0 / viewport[3] * pixels_per_meter, 1.0)
     );
 
     // Move the block to proper position
@@ -554,6 +542,14 @@ void Block::render() const {
             position.y - (float)viewport[3] / 2 + viewport[1],
             0.0f
     ));
+
+    // Rotate the block
+    transform = glm::rotate(
+            transform, (float)rotation,
+            glm::vec3(0.0f, 0.0f, 1.0f) // about the center
+    );
+
+
 
     // Give transformation matrix to vertex shader
     glUniformMatrix4fv(
@@ -613,7 +609,7 @@ Rect Block::bounding_box() { // TODO
     return Rect{*tLeft, width, height};
 }
 
-Point Block::center_of_mass() { 
+Point Block::center_of_mass() const {
     double centerx = 0;
     double centery = 0;
     double area = 0;
@@ -685,9 +681,9 @@ std::vector<Point> Block::find_critical_vertices(Block &other) const {
     auto triangles = other.get_triangulation();
     for (const auto& v : vertices) {
         for (const auto& triangle : triangles) {
-            auto p = to_world_coords(v);
+            auto p = other.to_relative_coords(to_world_coords(v));
             if (triangle.contains(p))
-                critical_vertices.push_back(p);
+                critical_vertices.push_back(v);
         }
     }
     return critical_vertices;
@@ -696,6 +692,7 @@ std::vector<Point> Block::find_critical_vertices(Block &other) const {
 
 Block Block::get_shadow() const {
     Block s = *this;
+    s.dc_edge_list = nullptr;
     s.angular_velocity = -s.angular_velocity;
     s.velocity = -s.velocity;
     s.apply_velocity();
@@ -705,10 +702,30 @@ Block Block::get_shadow() const {
 }
 
 Vect2 Block::get_normal(Segment edge) const {
-    auto half_edge = dc_edge_list.get_faces().front()->half_edge;
-    while (half_edge->origin->point != edge.p1) half_edge = half_edge->next;
+    auto half_edge = dc_edge_list->get_faces().front()->half_edge;
+    while (!half_edge->origin->point.epsilon_eq(edge.p1)) half_edge = half_edge->next;
     if (half_edge->next->origin->point != edge.p2) half_edge = half_edge->prev;
     return half_edge->get_normal();
+}
+
+Vect3 Block::angular_velocity_vector() const {
+    Vect3 v;
+    v.z = angular_velocity;
+    return v;
+}
+
+Point Block::to_world_coords(Point p) const {
+    p.revolve(rotation);
+    p.x += position.x;
+    p.y += position.y;
+    return p;
+}
+
+Point Block::to_relative_coords(Point p) const {
+    p.x -= position.x;
+    p.y -= position.y;
+    p.revolve(-rotation);
+    return p;
 }
 
 unsigned int Block::gl_program;

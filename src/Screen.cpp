@@ -28,9 +28,4 @@ void Screen::update() {
     for (Block* block : blocks) {
         block->apply_accel(gravity_accel);
     }
-
-    // Update render cache
-    for (Block* block : blocks) {
-        block->update_render_cache();
-    }
 }

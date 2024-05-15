@@ -4,7 +4,7 @@ project(physiks)
 
 add_executable(
         physiks
-        src/main.cpp
+        # src/main.cpp
         src/Point.cpp
         src/Color.cpp
         src/Block.cpp
@@ -15,6 +15,7 @@ add_executable(
         src/Screen.cpp
         src/CollisionSolving.cpp
         src/Segment.cpp
+        src/tests/CollisionSolving.cpp
 )
 
 target_include_directories(physiks PRIVATE include)
