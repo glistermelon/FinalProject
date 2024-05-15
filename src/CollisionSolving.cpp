@@ -56,3 +56,7 @@ Vect2 CollisionGroup::calc_normal() { // TODO
 void CollisionGroup::solve() { // TODO
 
 }
+
+bool CollisionGroup::is_same(CollisionGroup *other) {
+        return block1 == other->block1 && block2 == other->block2 || block1 == other->block2 && block2 == other->block1;
+}

@@ -38,6 +38,7 @@ public:
 
     CollisionGroup(Block* b1, Block* b2);
 
+    bool is_same(CollisionGroup*);
     void solve();
 
 };

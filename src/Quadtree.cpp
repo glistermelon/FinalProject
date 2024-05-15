@@ -83,14 +83,12 @@ void QuadtreeNode::insert_block(QuadtreeNode * tree, Block* block) {
     p->parent = bestSibling->parent;
     bestSibling->parent = p;
     qBlock->parent = p;
-    if (p->parent != nullptr) {
-        if (p->parent->left == bestSibling) p->parent->left = p;
-        else p->parent->right = p;
-    }
+    if (p->parent->left == bestSibling) p->parent->left = p;
+    else p->parent->right = p;
 
     // Refit the AABBs
     QuadtreeNode * ptr = p;
-    while (ptr != nullptr) {
+    while (ptr->left != nullptr) {
         double minSA;
         if (!ptr->left->is_leaf) {
             minSA = ptr->left->surface_area();
@@ -123,16 +121,26 @@ void QuadtreeNode::insert_block(QuadtreeNode * tree, Block* block) {
     }
 }
 
-// IMPORTANT, when using this function, will need to update the main tree outside of the function, this only removes the child but doesn't update the tree node
 QuadtreeNode* QuadtreeNode::remove_block() {
-    if (!is_leaf || parent == nullptr) {
+    if (!is_leaf || parent->left == nullptr) {
         return;
     }
-    QuadtreeNode * temp = nullptr;
     if (parent->left == this) {
-        parent->left = nullptr;
+        if (parent->parent->right == parent) {
+            parent->parent->right = parent->right;
+            parent->right->parent = parent->parent;
+        } else {
+            parent->parent->left = parent->right;
+            parent->right->parent = parent->parent;
+        } 
     } else {
-        parent->right = nullptr;
+        if (parent->parent->right == parent) {
+            parent->parent->right = parent->left;
+            parent->left->parent = parent->parent;
+        } else {
+            parent->parent->left = parent->left;
+            parent->left->parent = parent->parent;
+        }
     }
     parent = nullptr;
     return this;
@@ -170,8 +178,32 @@ void QuadtreeNode::search_tree(QuadtreeNode* n, std::stack<QuadtreeNode*> * inte
     if (n->right != nullptr) search_tree(n->right, intersects);
 }
 
+bool QuadtreeNode::fully_contained(Block* b) {
+    Rect bBox = b->bounding_box();
+    return !(bBox.bot_left.x < botleft.x || 
+        bBox.bot_left.y < botleft.y ||
+        bBox.bot_left.x + bBox.width > topright.x ||
+        bBox.bot_left.y + bBox.height > topright.y);
+}
+
+void QuadtreeNode::update_tree(std::stack<Block*> * blocks) {
+    if (is_leaf) {
+        if (!parent->fully_contained(block)) {
+            blocks->push(block);
+            remove_block();
+        }
+        return;
+    }
+    left->update_tree(blocks);
+    right->update_tree(blocks);
+    botleft.x = std::min(left->botleft.x, right->botleft.x);
+    botleft.y = std::min(left->botleft.y, right->botleft.y);
+    topright.x = std::max(left->topright.x, right->topright.x);
+    topright.y = std::max(left->topright.y, right->topright.y);
+}
+
 std::vector<CollisionGroup*> QuadtreeNode::find_collisions(QuadtreeNode* tree) {
-    if (tree == nullptr || tree->parent == nullptr) return std::vector<CollisionGroup*>();
+    if (tree == nullptr || tree->is_leaf) return std::vector<CollisionGroup*>();
     std::vector<CollisionGroup*> ret;
     std::stack <QuadtreeNode*> st;
     st.push(tree);
@@ -179,6 +211,7 @@ std::vector<CollisionGroup*> QuadtreeNode::find_collisions(QuadtreeNode* tree) {
     while (!st.empty()) {
         temp = st.top(); st.pop();
         if (temp->is_leaf) {
+            int i = ret.size(); // Check i's current size 
             if (temp == temp->parent->left) {
                 std::stack<QuadtreeNode*> intersects;
                 temp->parent->right->search_tree(temp, &intersects);
@@ -192,6 +225,12 @@ std::vector<CollisionGroup*> QuadtreeNode::find_collisions(QuadtreeNode* tree) {
                 while (!intersects.empty()) {
                     ret.push_back(new CollisionGroup(temp->block, intersects.top()->block));
                     intersects.pop();
+                }
+            }
+            // Find duplicates in ret
+            for (; i < ret.size(); i++) {
+                for (int j = i + 1; j < ret.size(); j++) {
+                    if (ret[i]->is_same(ret[j])) {ret.erase(ret.begin() + i); i--; break;}
                 }
             }
         } else {

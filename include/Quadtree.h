@@ -26,7 +26,9 @@ public:
     QuadtreeNode* find_bestSibling(QuadtreeNode*, QuadtreeNode*, double&, double); 
     QuadtreeNode* remove_block();
     bool is_intersecting(QuadtreeNode*,QuadtreeNode*);
+    bool fully_contained(Block*);
     void search_tree(QuadtreeNode*, std::stack<QuadtreeNode*> *);
-    std::vector<CollisionGroup*> find_collisions(QuadtreeNode*); //
+    void update_tree(std::stack<Block*> *);
+    std::vector<CollisionGroup*> find_collisions(QuadtreeNode*); 
     void swap(QuadtreeNode*, QuadtreeNode*);
 };
