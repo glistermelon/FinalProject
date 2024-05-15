@@ -2,6 +2,7 @@
 
 #include <list>
 #include <vector>
+#include <stack>
 
 #include "Block.h"
 #include "Vect2.h"
@@ -24,6 +25,8 @@ public:
     void insert_block(QuadtreeNode *, Block*);
     QuadtreeNode* find_bestSibling(QuadtreeNode*, QuadtreeNode*, double&, double); 
     QuadtreeNode* remove_block();
+    bool is_intersecting(QuadtreeNode*,QuadtreeNode*);
+    void search_tree(QuadtreeNode*, std::stack<QuadtreeNode*> *);
     std::vector<CollisionGroup*> find_collisions(QuadtreeNode*); //
     void swap(QuadtreeNode*, QuadtreeNode*);
 };

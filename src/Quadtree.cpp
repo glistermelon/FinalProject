@@ -1,5 +1,6 @@
 #include "Quadtree.h"
 #include <algorithm>
+#include <stack>
 
 QuadtreeNode::QuadtreeNode() {
     is_leaf = false;
@@ -122,29 +123,19 @@ void QuadtreeNode::insert_block(QuadtreeNode * tree, Block* block) {
     }
 }
 
+// IMPORTANT, when using this function, will need to update the main tree outside of the function, this only removes the child but doesn't update the tree node
 QuadtreeNode* QuadtreeNode::remove_block() {
     if (!is_leaf || parent == nullptr) {
         return;
     }
     QuadtreeNode * temp = nullptr;
     if (parent->left == this) {
-        if (parent->parent == nullptr) {
-            temp = parent->right;
-            delete parent; // MIGHT CAUSE BUG
-        }
-        else {
-            if (parent->parent->left == parent) parent->parent->left = parent->right;
-            else parent->parent->right = parent->right;
-        }
+        parent->left = nullptr;
     } else {
-        if (parent->parent == nullptr);
-        else {
-            if (parent->parent->left == parent) parent->parent->left = parent->left;
-            else parent->parent->right = parent->left;
-        }
+        parent->right = nullptr;
     }
     parent = nullptr;
-    return temp;
+    return this;
 }
 
 QuadtreeNode * QuadtreeNode::find_bestSibling(QuadtreeNode* tree, QuadtreeNode* b, double& bCost, double iCost) {
@@ -162,6 +153,51 @@ QuadtreeNode * QuadtreeNode::find_bestSibling(QuadtreeNode* tree, QuadtreeNode* 
         if (temp != nullptr) ret = temp;
         temp = find_bestSibling(tree->right, b, bCost, cost - b->surface_area());
         if (temp != nullptr) ret = temp;
+    }
+    return ret;
+}
+
+bool QuadtreeNode::is_intersecting(QuadtreeNode* a, QuadtreeNode* b) {
+    if (a == nullptr || b == nullptr) return false;
+    return !(a->botleft.x > b->topright.x || a->botleft.y > b->topright.y || a->topright.x < b->botleft.x || a->topright.y < b->botleft.y);
+}
+
+void QuadtreeNode::search_tree(QuadtreeNode* n, std::stack<QuadtreeNode*> * intersects) {
+    bool is_int = is_intersecting(n, this);
+    if (is_leaf && is_int) {intersects->push(this); return;}
+    if (is_leaf || !is_int) return;
+    if (n->left != nullptr) search_tree(n->left, intersects);
+    if (n->right != nullptr) search_tree(n->right, intersects);
+}
+
+std::vector<CollisionGroup*> QuadtreeNode::find_collisions(QuadtreeNode* tree) {
+    if (tree == nullptr || tree->parent == nullptr) return std::vector<CollisionGroup*>();
+    std::vector<CollisionGroup*> ret;
+    std::stack <QuadtreeNode*> st;
+    st.push(tree);
+    QuadtreeNode * temp;
+    while (!st.empty()) {
+        temp = st.top(); st.pop();
+        if (temp->is_leaf) {
+            if (temp == temp->parent->left) {
+                std::stack<QuadtreeNode*> intersects;
+                temp->parent->right->search_tree(temp, &intersects);
+                while (!intersects.empty()) {
+                    ret.push_back(new CollisionGroup(temp->block, intersects.top()->block));
+                    intersects.pop();
+                }
+            } else {
+                std::stack<QuadtreeNode*> intersects;
+                temp->parent->left->search_tree(temp, &intersects);
+                while (!intersects.empty()) {
+                    ret.push_back(new CollisionGroup(temp->block, intersects.top()->block));
+                    intersects.pop();
+                }
+            }
+        } else {
+            if (temp->left != nullptr) st.push(temp->left);
+            if (temp->right != nullptr) st.push(temp->right);
+        }
     }
     return ret;
 }
